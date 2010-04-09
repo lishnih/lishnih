@@ -1,0 +1,93 @@
+RewriteEngine on
+
+# Этот файл предназначен для перенаправления поддоменов на свои папки.
+# Допустим вы у хостера прописали хостинг следующих доменов
+# domain.tld, www.domain.tld
+# subdomain1.domain.tld
+# subdomain2.domain.tld
+# и назначили им одну папку: /home/user/domain/www
+# Этот скрипт будет делать следующий редирект
+# http://domain.tld/, http://www.domain.tld/ -> /home/user/domain/www/domain.tld/
+# http://subdomain1.domain.tld -> /home/user/domain/www/domain.tld/subdomain1/
+# http://subdomain2.domain.tld -> /home/user/domain/www/domain.tld/subdomain2/
+# Из этих правил легко сделать вывод что
+# http://domain.tld/subdomain1/ = http://subdomain1.domain.tld/
+
+# Этому адресу будут соответствовать следующие переменные
+# http://domain.tld/path/to/file/file.php
+# HTTP_HOST	domain.tld
+# REQUEST_URI	/path/to/file/file.php
+
+# Можно выбрать два условия редиректа
+# RewriteCond %{REQUEST_URI} !^.*\..*/.*$
+# Если до последнего слеша в адресе встретится точка, то редиректа нет
+# http://domain.tld/dir1/dir.2/ -> /home/user/domain/www/dir1/dir.2/
+# RewriteCond %{REQUEST_URI} !^/[^/]*\..*/.*$
+# Если в первой папке нет точек, то редиректа отменяется
+# http://domain.tld/dir1/dir.2/ -> /home/user/domain/www/domain.tld/dir1/dir.2/ но
+# http://domain.tld/dir.1/dir2/ -> /home/user/domain/www/dir.1/dir2/
+# Это условие требуется для того чтобы апатч не вошёл в бесконечный цикл
+
+# Это условие даёт выбранному доменному имени доступ к корневой папке
+# http://main.domain.tld -> /home/user/domain/www/
+# RewriteCond %{HTTP_HOST} !^main.usede.net$ [NC]
+
+# Убираем точку в конце имени хоста
+# Адрес типа http://domain.tld. (c точкой на конце) будет правильно обрабатываться
+# сервером, но точка в конце обычно не предусматривается в php-скриптах,
+# поэтому просто делаем глобальный редирект на домен без точки в конце имени
+RewriteCond %{HTTP_HOST}    (.*)\.$
+RewriteRule ^/?(.*)         http://%1/$1       [L,R=permanent]
+
+
+
+# Вот так будет выглядеть чистый Rewrite без всяких исключений
+# Разработка 0.30 16 сентября 2006г.
+# http://www.any.domain.tld/request_uri -> /any.domain.tld/request_uri
+#RewriteCond %{HTTP_HOST}    ^www\.(.*)         [NC]
+#RewriteCond %{REQUEST_URI}  !^/[^/]*\..*/.*$
+#RewriteRule ^(.*)$          /%1/$1             [L,NS]
+#
+# http://subdomain.domain.tld/request_uri -> /domain.tld/subdomain/request_uri
+#RewriteCond %{HTTP_HOST}    (.*)\.(.*)\.(.*)$
+#RewriteCond %{REQUEST_URI}  !^/[^/]*\..*/.*$
+#RewriteRule ^(.*)$          /%2.%3/%1/$1       [L,NS]
+#
+# http://domain.tld/request_uri -> /domain.tld/request_uri
+#RewriteCond %{REQUEST_URI}  !^/[^/]*\..*/.*$
+#RewriteRule ^(.*)$          /%{HTTP_HOST}/$1   [L,NS]
+
+
+
+# А вот так выглядит Rewrite с доступом к корневой папке из
+# usede.net.ru
+# Можно сделать доступ из usede.net ( закомментировано )
+# http://www.any.domain.tld/request_uri -> /any.domain.tld/request_uri
+RewriteCond %{HTTP_HOST}    ^www\.(.*)         [NC]
+RewriteCond %{REQUEST_URI}  !^/[^/]*\..*/.*$
+RewriteRule ^(.*)$          /%1/$1             [L,NS]
+
+# http://subdomain.domain.tld/request_uri -> /domain.tld/subdomain/request_uri
+RewriteCond %{HTTP_HOST}    !^usede.net.ru$    [NC]
+RewriteCond %{HTTP_HOST}    (.*)\.(.*)\.(.*)$
+RewriteCond %{REQUEST_URI}  !^/[^/]*\..*/.*$
+RewriteRule ^(.*)$          /%2.%3/%1/$1       [L,NS]
+
+# http://domain.tld/request_uri -> /domain.tld/request_uri
+#RewriteCond %{HTTP_HOST}   !^usede.net$       [NC]
+# Следуещее правило нужно для того чтобы домен 3го уровня здесь не
+# перенаправлялся на логичный /subdomain.domain.tld/request_uri
+RewriteCond %{HTTP_HOST}    !^usede.net.ru$    [NC]
+RewriteCond %{REQUEST_URI}  !^/[^/]*\..*/.*$
+RewriteRule ^(.*)$          /%{HTTP_HOST}/$1   [L,NS]
+
+
+
+ErrorDocument 401 /a.b/401.php
+ErrorDocument 403 /a.b/403.php
+ErrorDocument 404 /a.b/404.php
+ErrorDocument 410 /a.b/410.php
+ErrorDocument 500 /a.b/500.php
+
+# Stan admin@usede.net
+# v0.30 17 сентября 2006г.

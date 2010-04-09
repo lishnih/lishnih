@@ -1,0 +1,30 @@
+RewriteEngine on
+
+# Убираем точку в конце имени хоста
+RewriteCond %{HTTP_HOST}    (.*)\.$
+RewriteRule ^/?(.*)         http://%1/$1      [L,R=permanent]
+
+# Убираем www
+#RewriteCond %{REQUEST_URI} !^/_.*$
+RewriteCond %{REQUEST_URI}  !^.*\..*/.*$
+RewriteCond %{HTTP_HOST}    ^www\.(.*)        [NC]
+RewriteRule ^(.*)$          /%1/$1            [L,NS]
+
+# Если www нет
+#RewriteCond %{REQUEST_URI} !^/_.*$
+RewriteCond %{REQUEST_URI}  !^.*\..*/.*$
+RewriteRule ^(.*)$          /%{HTTP_HOST}/$1  [L]
+
+# По отдельности
+# Убираем www
+#RewriteCond %{HTTP_HOST} ^www\.(.*) [NC]
+#RewriteRule ^/?(.*) http://%1/$1 [L,R=permanent]
+# Виртуальные хосты
+#RewriteCond %{REQUEST_URI} !^/_.*$ [NC]
+#RewriteRule ^(.*)$               /_%{HTTP_HOST}/$1 [C,L,NS,E=HOST:$1]
+#RewriteRule ^(.*)$ /_$1              [L,NS,E=HOST:$1]
+
+# Черновики
+#RewriteRule ^(.*)$ /_%{HTTP_HOST}/$1 [L,NS,E=HOST:$1]
+# _SERVER["REDIRECT_REDIRECT_HOST"]
+# _SERVER["REDIRECT_URL"]
