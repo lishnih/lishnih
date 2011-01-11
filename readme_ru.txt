@@ -6,6 +6,8 @@ lishnih
 
     cpp         Здесь размещаются cpp-исходники.
 
+    excel-vba   Здесь размещаются скрипты VBA для Excel.
+
     htaccess    Здесь размещаются версии .htaccess для web-сервера apache2.
 
     php         Здесь размещаются php-скрипты.
