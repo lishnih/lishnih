@@ -1,12 +1,12 @@
-lishnih
+http://code.google.com/p/lishnih/
 
     bpy         Здесь размещаются python-скрипты для Блендера (http://blender3d.org).
 
-    cmd         Здесь размещаются скрипты для командной строки Windows.
+    cmd         Здесь размещаются скрипты для командной строки Windows®.
 
     cpp         Здесь размещаются cpp-исходники.
 
-    excel-vba   Здесь размещаются скрипты VBA для Excel.
+    excel-vba   Здесь размещаются скрипты VBA для Microsoft Excel®.
 
     htaccess    Здесь размещаются версии .htaccess для web-сервера apache2.
 
@@ -15,3 +15,5 @@ lishnih
     py          Здесь размещаются python-скрипты.
 
     sh          Здесь размещаются скрипты для консоли Linux.
+
+    word-vba    Здесь размещаются скрипты VBA для Microsoft Word®.
