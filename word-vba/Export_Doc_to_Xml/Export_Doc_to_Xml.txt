@@ -1,7 +1,7 @@
 ' Export_Doc_to_Xml (December 02, 2010)
 ' ©2010 Stan http://lishnih.net
 ' lishnih@gmail.com
-' Rev.3 20.12.2010
+' Rev.4 21.12.2010
 
 Sub CreateFolder(dirname)
     Set fs = CreateObject("Scripting.FileSystemObject")
@@ -11,13 +11,14 @@ Sub CreateFolder(dirname)
 End Sub
 
 Function Trim_white_spaces(text)
-    text = Replace(text, Chr(13), "")
-    text = Replace(text, Chr(10), "")
-    text = Replace(text, Chr(7), "")
+    text = Replace(text, Chr(95), "")   ' Подчёркивание '_'
+    text = Replace(text, Chr(13), "")   ' CR
+    text = Replace(text, Chr(10), "")   ' LF
+    text = Replace(text, Chr(7), "")    ' Табуляция
     Trim_white_spaces = Trim(text)
 End Function
 
-Function Get_text_after_find(search_text)
+Sub Run_Find(search_text)
     Selection.Find.ClearFormatting
     With Selection.Find
         .text = search_text
@@ -32,13 +33,39 @@ Function Get_text_after_find(search_text)
         .MatchAllWordForms = False
     End With
     Selection.Find.Execute
+End Sub
+
+Function Get_report_type()
+    Get_report_type = ""
+
+    Run_Find "Заключение по результатам визуально-измерительного контроля"
+    If Selection.Find.Found Then
+        Get_report_type = "VT"
+        Exit Function
+    End If
+
+    Run_Find "Заключение по результатам радиографического контроля"
+    If Selection.Find.Found Then
+        Get_report_type = "RT"
+        Exit Function
+    End If
+
+    Run_Find "Заключение по результатам ультразвукового  контроля"
+    If Selection.Find.Found Then
+        Get_report_type = "UT"
+        Exit Function
+    End If
+End Function
+
+Function Get_text_after_find(search_text)
+    Run_Find search_text
     If Selection.Find.Found Then
         Selection.MoveRight Unit:=wdCharacter, Count:=1
         Selection.EndKey Unit:=wdLine, Extend:=wdExtend
         Get_text_after_find = Trim_white_spaces(Selection.text)
     Else
-        Response = MsgBox(search_text, Title:=ActiveDocument.FullName)
-        Get_text_after_find = ""
+'       Response = MsgBox(search_text, Title:=ActiveDocument.FullName)
+        Get_text_after_find = "### Not found ###"
     End If
 End Function
 
@@ -51,6 +78,15 @@ Sub Write_tag(file_desc, tag_name, tag_value, Optional level = 1)
 End Sub
 
 Sub Recognize_and_Save_Xml(xmlFileName, Optional csvFile = False)
+' Определяем тип заключения
+    type_text = Get_report_type()
+    If type_text = "" Then
+        delimiter = Chr(9)
+        text = ActiveDocument.FullName & delimiter & "### Undefined ###"
+        csvFile.WriteLine (text)
+        Exit Sub
+    End If
+
 ' Сначала записываем файл XML
     Set fs = CreateObject("Scripting.FileSystemObject")
     Set a = fs.CreateTextFile(xmlFileName, True, True)
@@ -72,9 +108,15 @@ Sub Recognize_and_Save_Xml(xmlFileName, Optional csvFile = False)
     spread_text = Get_text_after_find("Участок трубопровода, километраж")
     contractor_text = Get_text_after_find("Наименование организации Подрядчика")
     customer_text = Get_text_after_find("Наименование организации Заказчика")
-    report_id_text = Get_text_after_find("З А К Л Ю Ч Е Н И Е №")
     date_text = Get_text_after_find("От")
 
+    If type_text = "UT" Then
+        report_id_text = Get_text_after_find("ЗА К Л Ю Ч Е Н И Е  №")
+    Else
+        report_id_text = Get_text_after_find("З А К Л Ю Ч Е Н И Е №")
+    End If
+
+    Write_tag a, "type", type_text, 2
     Write_tag a, "object", object_text, 2
     Write_tag a, "quality", quality_text, 2
     Write_tag a, "pipeline", pipeline_text, 2
@@ -97,21 +139,23 @@ Sub Recognize_and_Save_Xml(xmlFileName, Optional csvFile = False)
 
     t = ActiveDocument.Tables.Count
     If t >= 4 Then
-        Selection.GoTo What:=wdGoToTable, Which:=wdGoToFirst, Count:=4, Name:=""
-        Selection.SelectCell
-        Selection.MoveDown Unit:=wdLine, Count:=2
-        Selection.MoveRight Unit:=wdCell, Count:=1
-        Selection.SelectCell
-        joint_id_text = Trim_white_spaces(Selection.text)
-        Selection.MoveRight Unit:=wdCharacter, Count:=1
-        Selection.SelectCell
-        dt_text = Trim_white_spaces(Selection.text)
-        Selection.MoveRight Unit:=wdCharacter, Count:=1
-        Selection.SelectCell
-        welders_text = Trim_white_spaces(Selection.text)
-        Selection.MoveRight Unit:=wdCell, Count:=4
-        Selection.SelectCell
-        decision_text = Trim_white_spaces(Selection.text)
+        If type_text <> "UT" Then
+            Selection.GoTo What:=wdGoToTable, Which:=wdGoToFirst, Count:=4, Name:=""
+            Selection.SelectCell
+            Selection.MoveDown Unit:=wdLine, Count:=2
+            Selection.MoveRight Unit:=wdCell, Count:=1
+            Selection.SelectCell
+            joint_id_text = Trim_white_spaces(Selection.text)
+            Selection.MoveRight Unit:=wdCharacter, Count:=1
+            Selection.SelectCell
+            dt_text = Trim_white_spaces(Selection.text)
+            Selection.MoveRight Unit:=wdCharacter, Count:=1
+            Selection.SelectCell
+            welders_text = Trim_white_spaces(Selection.text)
+            Selection.MoveRight Unit:=wdCell, Count:=4
+            Selection.SelectCell
+            decision_text = Trim_white_spaces(Selection.text)
+        End If
 
         Write_tag a, "id", joint_id_text, 2
         Write_tag a, "dt", dt_text, 2
@@ -120,16 +164,15 @@ Sub Recognize_and_Save_Xml(xmlFileName, Optional csvFile = False)
     End If
 
     a.WriteLine ("  </joints>")
-    
+
     a.WriteLine ("</root>")
     a.Close
 
 ' Теперь записываем файл CSV
-    On Error Resume Next
     delimiter = Chr(9)
-    text = report_id_text & delimiter & date_text & delimiter & _
-           joint_id_text & delimiter & dt_text & delimiter & welders_text & delimiter & decision_text & delimiter & _
-           ActiveDocument.FullName
+    text = ActiveDocument.FullName & delimiter & type_text & delimiter & _
+           report_id_text & delimiter & date_text & delimiter & _
+           joint_id_text & delimiter & dt_text & delimiter & welders_text & delimiter & decision_text
     csvFile.WriteLine (text)
 End Sub
 
@@ -178,7 +221,7 @@ End Sub
 Sub Export_Docs_Dir_to_Xml()
     Application.ScreenUpdating = False
 
-    sDocsPath = "D:\home\bu41\Заключения_doc\РК трасса"
+    sDocsPath = "D:\home\bu41\Заключения_doc"
     sXmlsPath = "D:\home\bu41\xml_reports"
     sCsvFile = "D:\home\bu41\reports.csv"
 
@@ -192,14 +235,19 @@ Sub Export_Docs_Dir_to_Xml()
 End Sub
 
 Sub Export_Opened_Doc_to_Xml()
+'   Application.ScreenUpdating = False
 
     sXmlsPath = "D:\home\bu41\xml_report1"
+    sCsvFile = "D:\home\bu41\report1.csv"
 
 '   On Error Resume Next
-    CreateFolder (sXmlsPath)
+    Set fs = CreateObject("Scripting.FileSystemObject")
+    Set csvFile = fs.CreateTextFile(sCsvFile, True, True)
 
-    sFileName = ActiveDocument.Name
-    xmlFileName = sXmlsPath & "\" & Replace(sFileName, ".doc", ".xml")
-    Recognize_and_Save_Xml xmlFileName
+    CreateFolder sXmlsPath
+    xmlFileName = sXmlsPath & "\" & Replace(ActiveDocument.Name, ".doc", ".xml")
+    Recognize_and_Save_Xml xmlFileName, csvFile
+
+    csvFile.Close
 End Sub
 
