@@ -1,0 +1,41 @@
+' Обновить_формулы (December 06, 2010)
+' ©2010 Stan http://lishnih.net
+' lishnih@gmail.com
+' Rev.1 06.12.2010
+
+Sub Обновить_формулы()
+'   Выделяем текст и обновляем формулы
+    Selection.WholeStory
+    Selection.Fields.Update
+
+'   Переключаем к режим wdPrintView
+    If ActiveWindow.View.SplitSpecial <> wdPaneNone Then
+        ActiveWindow.Panes(2).Close
+    End If
+    If ActiveWindow.ActivePane.View.Type = wdNormalView Or ActiveWindow. _
+        ActivePane.View.Type = wdOutlineView Then
+        ActiveWindow.ActivePane.View.Type = wdPrintView
+    End If
+
+'   Переключаемся в верхний колонтитул и обновляем форумы в нём
+    ActiveWindow.ActivePane.View.SeekView = wdSeekCurrentPageHeader
+    Selection.WholeStory
+    Selection.Fields.Update
+
+'   То же самое с нижним колонтитулом
+    ActiveWindow.ActivePane.View.SeekView = wdSeekCurrentPageFooter
+    Selection.WholeStory
+    Selection.Fields.Update
+
+'   Переключаемся на следующий (тоже нижний) колонтитул и обновляем
+    ActiveWindow.ActivePane.View.NextHeaderFooter
+    Selection.WholeStory
+    Selection.Fields.Update
+
+'    ActiveWindow.ActivePane.View.SeekView = wdSeekCurrentPageHeader
+'    Selection.WholeStory
+'    Selection.Fields.Update
+
+'   Переключаемся в документ
+    ActiveWindow.ActivePane.View.SeekView = wdSeekMainDocument
+End Sub
