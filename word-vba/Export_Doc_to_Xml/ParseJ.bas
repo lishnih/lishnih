@@ -3,10 +3,9 @@ Attribute VB_Name = "ParseJ"
 ' Проект "Бованенкого-Ухта", Подрядчик "СГК-Трубопроводстрой"
 ' ©2011 Stan http://lishnih.net
 ' lishnih@gmail.com
-' Rev.3 2011-06-12
+' Rev.3 2011-06-17
 
 Function Разобрать_номер_стыка(inpStr, Optional debugpoint = False)
-
 ' Функция возвращает Array: pattern_id, kp, type, joint, sign
 
 ' Отсеиваем нелинейные стыки
@@ -47,10 +46,10 @@ Function Разобрать_номер_стыка(inpStr, Optional debugpoint = False)
     separator_ext_ptrn = "[ \.\-]*"
     type_ptrn = "(АХ|АС|РД)"
     kp_ptrn = "км[ \.]*(\d+)"
-    joint_id_ptrn = "ст" & separator_ext_ptrn & "(\d+)" & separator_ptrn & "([АБЛЗВР]*)"
-    joint_id_ext_ptrn = "ст" & separator_ext_ptrn & "([\d-]+)" & separator_ptrn & "([АБЛЗВР]*)"
+    joint_id_ptrn = "ст" & separator_ext_ptrn & "(\d+)" & separator_ptrn & "([АБКЛЗВР]*)"
+    joint_id_ext_ptrn = "ст" & separator_ext_ptrn & "([\d-]+)" & separator_ptrn & "([АБКЛЗВР]*)"
 
-' АХ ст-84 км 688           Частный случай: АХ ст.1-8 км.724
+' АХ ст-84 км 688           Частный случай: АХ ст.1-8 км.724, РД ст.63-7КР км.702
     objRegExp.Pattern = type_ptrn & separator_ptrn & joint_id_ext_ptrn & separator_ptrn & kp_ptrn
     Set objMatches = objRegExp.Execute(inpStr)
     Set objMatch = objMatches.Item(0)

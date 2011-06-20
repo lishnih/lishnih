@@ -3,9 +3,9 @@ Attribute VB_Name = "Global_Replace"
 ' Проект "Бованенкого-Ухта", Подрядчик "СГК-Трубопроводстрой"
 ' ©2011 Stan http://lishnih.net
 ' lishnih@gmail.com
-' Rev.1 2011-06-11
+' Rev.2 2011-06-17
 
-Sub Replace_Text(searching_text, replacement_text, Optional FileName = "")
+Sub Replace_Text(searching_text, replacement_text, Optional filename = "")
     Selection.Find.ClearFormatting
     Selection.Find.Replacement.ClearFormatting
     With Selection.Find
@@ -30,8 +30,8 @@ Sub Replace_Text(searching_text, replacement_text, Optional FileName = "")
     Selection.Find.Execute Replace:=wdReplaceAll
 
     If Selection.Find.Found Then
-        If FileName <> "" Then
-            text = FileName
+        If filename <> "" Then
+            text = filename
         Else
             text = "Найдено!"
         End If
@@ -44,8 +44,8 @@ Sub Replace_Text_WalkDir(searching_text, replacement_text, dir_text, fs)
         dir_text = dir_text & "\"
     End If
 
-    Set F = fs.GetFolder(dir_text)
-    Set fc = F.SubFolders
+    Set f = fs.GetFolder(dir_text)
+    Set fc = f.SubFolders
     For Each fDir In fc
         Replace_Text_WalkDir searching_text, replacement_text, fDir, fs
     Next
@@ -59,7 +59,7 @@ Sub Replace_Text_WalkDir(searching_text, replacement_text, dir_text, fs)
             If ext = ".doc" Then
                 fullname_text = dir_text & filename_text
 
-                Documents.Open FileName:=fullname_text, _
+                Documents.Open filename:=fullname_text, _
                     ConfirmConversions:=False, ReadOnly:=False, AddToRecentFiles:=False, _
                     PasswordDocument:="", PasswordTemplate:="", Revert:=False, _
                     WritePasswordDocument:="", WritePasswordTemplate:="", Format:=wdOpenFormatAuto, _
@@ -83,21 +83,24 @@ End Sub
 Sub Replace_Text_dir()
     Application.ScreenUpdating = False
 
-    dir_text = "D:\home\bu42\reports\_Заключения_doc"
-    searching_text = "Варданян  Ф.В."
-    replacement_text = "Варданян Ф.В."
+    dir_text = "D:\home\bu42\reports\УЗК_Юра-doc"
+    searching_text = "AХ"
+    replacement_text = "АХ"
 
-    Set fs = CreateObject("Scripting.FileSystemObject")
-
-    Replace_Text_WalkDir searching_text, replacement_text, dir_text, fs
+    If searching_text <> "" Then
+        Set fs = CreateObject("Scripting.FileSystemObject")
+        Replace_Text_WalkDir searching_text, replacement_text, dir_text, fs
+    End If
 End Sub
 
 Sub Replace_Text_opened()
 '   Application.ScreenUpdating = False
 
-    searching_text = "Варданян  Ф.В."
-    replacement_text = "Варданян Ф.В."
+    searching_text = ""
+    replacement_text = ""
 
-    Replace_Text searching_text, replacement_text
+    If searching_text <> "" Then
+        Replace_Text searching_text, replacement_text
+    End If
 End Sub
 

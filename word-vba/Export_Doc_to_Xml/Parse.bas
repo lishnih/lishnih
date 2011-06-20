@@ -1,7 +1,6 @@
 Attribute VB_Name = "Parse"
 ' Функции парсинга для модуля Global_Export
-' Rev. 2011-06-14
-
+' Rev. 2011-06-17
 
 Function Parse_report_id(text)
     If text = "" Then
@@ -125,7 +124,8 @@ Function Parse_name(text)
         name_id = 3
     ElseIf text = "Варданян Ф.В." Then
         name_id = 4
-
+    ElseIf text = "Лыжин В.А." Then
+        name_id = 5
     ElseIf text = "Целуйко Ю.В." Then
         name_id = 6
 
@@ -145,6 +145,9 @@ Function Parse_name(text)
         name_id = 27
     ElseIf text = "Чуйко О.Г." Then
         name_id = 28
+    ElseIf text = "Неволин С.Н." Then
+        name_id = 29
+
     Else
         name_id = -1
     End If
@@ -155,6 +158,7 @@ End Function
 Function Parse_cert(text)
     text = Replace(text, "Уровень квалификации, №  удостоверения:", "")
     text = Replace(text, "Уровень квалификации, № удостоверения:", "")
+    text = Replace(text, "Уровень квалификации, № уд.-я:", "")
     text = Replace(text, "Уровень квалификации, №  уд .", "")
     text = Trim(text)
 
