@@ -4,8 +4,8 @@
 """Filling is the GUI tree control through which a user can navigate
 the local namespace or any object.
 
-This is GTK version of filling.py developed by
-Patrick K. O'Brien <pobrien@orbtech.com> from wxPython package.
+This is GTK version of filling.py (wxPython) by
+Patrick K. O'Brien <pobrien@orbtech.com>
 
 Замеченные неточности:
 При запуске скрипта выполняется построение дерева rootObject на тот
@@ -243,10 +243,10 @@ Value: %s%s%s""" % (name_str, str(otype), value_str, doc_str, class_str)
 
         self.window.show_all()
 
-#~ from wx.py.PyFilling import main
-tv = fillingTreeView()
 
 def main():
+    #~ from wx.py.PyFilling import main
+    tv = fillingTreeView()
     gtk.main()
 
 if __name__ == "__main__":
