@@ -3,8 +3,3 @@
 
 Rev.1 На каждый стык создаётся одно заключение ВИК.
 Rev.1 Создаётся заключение ВИК на одну дату.
-
-Cкрипт распространяются под лицензией GNU General Public License
-http://www.gnu.org/licenses/gpl.html
-
-stan <lishnih@gmail.com>
