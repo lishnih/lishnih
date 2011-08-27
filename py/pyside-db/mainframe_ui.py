@@ -1,90 +1,108 @@
-#!/usr/bin/env python
 # -*- coding: utf-8 -*-
-# Stan 2011-07-04
+
+# Form implementation generated from reading ui file 'C:\Python27\Lib\site-packages\ndt\mainframe.ui'
+#
+# Created: Sat Aug 27 10:42:27 2011
+#      by: pyside-uic 0.2.12 running on PySide 1.0.5
+#
+# WARNING! All changes made in this file will be lost!
 
 from PySide import QtCore, QtGui
 
-
-# Основное окно
-class MainFrameUI(QtGui.QMainWindow):
-    def __init__(self):
-        super(MainFrameUI, self).__init__()
-
-        self.setWindowTitle("pySide Skeleton")
-        self.resize(700, 544)
-
-        self.centralwidget = QtGui.QWidget(self)
+class Ui_MainWindow(object):
+    def setupUi(self, MainWindow):
+        MainWindow.setObjectName("MainWindow")
+        MainWindow.resize(700, 544)
+        self.centralwidget = QtGui.QWidget(MainWindow)
+        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Minimum)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.centralwidget.sizePolicy().hasHeightForWidth())
+        self.centralwidget.setSizePolicy(sizePolicy)
+        self.centralwidget.setObjectName("centralwidget")
         self.gridLayout = QtGui.QGridLayout(self.centralwidget)
         self.gridLayout.setContentsMargins(0, 0, 0, 0)
-
-
-        self.menubar = QtGui.QMenuBar(self)
-
-        self.menuFile = QtGui.QMenu(self.menubar)
-        self.menuFile.setTitle("File")
-        self.menuHelp = QtGui.QMenu(self.menubar)
-        self.menuHelp.setTitle("Help")
-
-        self.actionNew = QtGui.QAction(self)
-        self.actionNew.setText("New")
-        self.menuFile.addAction(self.actionNew)
-        self.actionOpen = QtGui.QAction(self)
-        self.actionOpen.setText("Open")
-        self.menuFile.addAction(self.actionOpen)
-        self.actionClose = QtGui.QAction(self)
-        self.actionClose.setText("Close")
-        self.menuFile.addAction(self.actionClose)
-        self.menuFile.addSeparator()
-        self.actionExit = QtGui.QAction(self)
-        self.actionExit.setText("Exit")
-        self.menuFile.addAction(self.actionExit)
-
-        self.actionAbout = QtGui.QAction(self)
-        self.actionAbout.setText("About")
-        self.menuHelp.addAction(self.actionAbout)
-
-        self.menubar.addAction(self.menuFile.menuAction())
-        self.menubar.addAction(self.menuHelp.menuAction())
-        self.setMenuBar(self.menubar)
-
-
-        self.statusbar = QtGui.QStatusBar(self)
-        self.setStatusBar(self.statusbar)
-
-
-        self.toolBar = QtGui.QToolBar(self)
-        self.addToolBar(QtCore.Qt.TopToolBarArea, self.toolBar)
-        self.toolBar.setWindowTitle("toolBar")
-
-
+        self.gridLayout.setObjectName("gridLayout")
         self.tree = QtGui.QTreeWidget(self.centralwidget)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.MinimumExpanding, QtGui.QSizePolicy.Expanding)
         sizePolicy.setHorizontalStretch(1)
         sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.tree.sizePolicy().hasHeightForWidth())
         self.tree.setSizePolicy(sizePolicy)
         self.tree.setMinimumSize(QtCore.QSize(250, 0))
-        self.tree.headerItem().setText(0, "Filename")
+        self.tree.setObjectName("tree")
         self.gridLayout.addWidget(self.tree, 0, 0, 1, 1)
-
-
         self.tab = QtGui.QTabWidget(self.centralwidget)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Expanding)
         sizePolicy.setHorizontalStretch(2)
         sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.tab.sizePolicy().hasHeightForWidth())
         self.tab.setSizePolicy(sizePolicy)
+        self.tab.setObjectName("tab")
         self.tab1 = QtGui.QWidget()
+        self.tab1.setObjectName("tab1")
         self.tab.addTab(self.tab1, "")
         self.tab2 = QtGui.QWidget()
+        self.tab2.setObjectName("tab2")
         self.tab.addTab(self.tab2, "")
-        self.tab.setTabText(0, "Info")
-        self.tab.setTabText(1, "Errors")
         self.gridLayout.addWidget(self.tab, 0, 1, 1, 1)
+        MainWindow.setCentralWidget(self.centralwidget)
+        self.menubar = QtGui.QMenuBar(MainWindow)
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 700, 21))
+        self.menubar.setObjectName("menubar")
+        self.menuFile = QtGui.QMenu(self.menubar)
+        self.menuFile.setObjectName("menuFile")
+        self.menuHelp = QtGui.QMenu(self.menubar)
+        self.menuHelp.setObjectName("menuHelp")
+        MainWindow.setMenuBar(self.menubar)
+        self.statusbar = QtGui.QStatusBar(MainWindow)
+        self.statusbar.setObjectName("statusbar")
+        MainWindow.setStatusBar(self.statusbar)
+        self.toolBar = QtGui.QToolBar(MainWindow)
+        self.toolBar.setObjectName("toolBar")
+        MainWindow.addToolBar(QtCore.Qt.TopToolBarArea, self.toolBar)
+        self.actionNew = QtGui.QAction(MainWindow)
+        self.actionNew.setObjectName("actionNew")
+        self.actionOpen = QtGui.QAction(MainWindow)
+        self.actionOpen.setObjectName("actionOpen")
+        self.actionClose = QtGui.QAction(MainWindow)
+        self.actionClose.setObjectName("actionClose")
+        self.actionExit = QtGui.QAction(MainWindow)
+        self.actionExit.setObjectName("actionExit")
+        self.actionAbout = QtGui.QAction(MainWindow)
+        self.actionAbout.setObjectName("actionAbout")
+        self.menuFile.addAction(self.actionNew)
+        self.menuFile.addAction(self.actionOpen)
+        self.menuFile.addAction(self.actionClose)
+        self.menuFile.addSeparator()
+        self.menuFile.addAction(self.actionExit)
+        self.menuHelp.addAction(self.actionAbout)
+        self.menubar.addAction(self.menuFile.menuAction())
+        self.menubar.addAction(self.menuHelp.menuAction())
 
-        self.setCentralWidget(self.centralwidget)
+        self.retranslateUi(MainWindow)
+        self.tab.setCurrentIndex(0)
+        QtCore.QObject.connect(self.actionExit, QtCore.SIGNAL("triggered()"), MainWindow.close)
+        QtCore.QObject.connect(self.actionNew, QtCore.SIGNAL("triggered()"), MainWindow.OnFileNew)
+        QtCore.QObject.connect(self.actionOpen, QtCore.SIGNAL("triggered()"), MainWindow.OnFileOpen)
+        QtCore.QObject.connect(self.actionClose, QtCore.SIGNAL("triggered()"), MainWindow.OnFileClose)
+        QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
+    def retranslateUi(self, MainWindow):
+        MainWindow.setWindowTitle(QtGui.QApplication.translate("MainWindow", "MainWindow", None, QtGui.QApplication.UnicodeUTF8))
+        self.tree.headerItem().setText(0, QtGui.QApplication.translate("MainWindow", "Filename", None, QtGui.QApplication.UnicodeUTF8))
+        self.tab.setTabText(self.tab.indexOf(self.tab1), QtGui.QApplication.translate("MainWindow", "Tab 1", None, QtGui.QApplication.UnicodeUTF8))
+        self.tab.setTabText(self.tab.indexOf(self.tab2), QtGui.QApplication.translate("MainWindow", "Tab 2", None, QtGui.QApplication.UnicodeUTF8))
+        self.menuFile.setTitle(QtGui.QApplication.translate("MainWindow", "File", None, QtGui.QApplication.UnicodeUTF8))
+        self.menuHelp.setTitle(QtGui.QApplication.translate("MainWindow", "Help", None, QtGui.QApplication.UnicodeUTF8))
+        self.toolBar.setWindowTitle(QtGui.QApplication.translate("MainWindow", "toolBar", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionNew.setText(QtGui.QApplication.translate("MainWindow", "New", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionNew.setShortcut(QtGui.QApplication.translate("MainWindow", "Alt+N", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionOpen.setText(QtGui.QApplication.translate("MainWindow", "Open", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionOpen.setShortcut(QtGui.QApplication.translate("MainWindow", "Alt+O", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionClose.setText(QtGui.QApplication.translate("MainWindow", "Close", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionClose.setShortcut(QtGui.QApplication.translate("MainWindow", "Alt+C", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionExit.setText(QtGui.QApplication.translate("MainWindow", "Exit", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionExit.setShortcut(QtGui.QApplication.translate("MainWindow", "Alt+X", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionAbout.setText(QtGui.QApplication.translate("MainWindow", "About", None, QtGui.QApplication.UnicodeUTF8))
 
-
-        QtCore.QObject.connect(self.actionExit, QtCore.SIGNAL("triggered()"), self.close)
-        QtCore.QObject.connect(self.actionNew, QtCore.SIGNAL("triggered()"), self.OnFileNew)
-        QtCore.QObject.connect(self.actionOpen, QtCore.SIGNAL("triggered()"), self.OnFileOpen)
-        QtCore.QObject.connect(self.actionClose, QtCore.SIGNAL("triggered()"), self.OnFileClose)

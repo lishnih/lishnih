@@ -3,16 +3,19 @@
 # Stan 2011-06-22
 
 from PySide import QtCore, QtGui
-from mainframe_ui import MainFrameUI
+from mainframe_ui import Ui_MainWindow
 from items import DirItem, FileItem
 from registry import Registry
 from thread1 import th
 
 
 # Основное окно
-class MainFrame(MainFrameUI):
-    def __init__(self):
+class MainFrame(QtGui.QMainWindow):
+    def __init__(self, parent=None):
         super(MainFrame, self).__init__()
+
+        self.ui = Ui_MainWindow()
+        self.ui.setupUi(self)
 
         self.cwd = QtCore.QDir.current()
         self.ext_dir = QtCore.QDir(self.cwd.filePath('ext'))
@@ -129,11 +132,11 @@ class MainFrame(MainFrameUI):
                 return
 
             # Статусбар отображает имя файла базы данных
-            self.statusbar.showMessage(Reg.db_fullname)
+            self.ui.statusbar.showMessage(Reg.db_fullname)
 
             # Строим дерево
-            self.tree.clear()
-            th.set(self.WalkDir, selected_dir, self.tree, Reg)
+            self.ui.tree.clear()
+            th.set(self.WalkDir, selected_dir, self.ui.tree, Reg)
             th.start()
 
 
