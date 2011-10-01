@@ -1,0 +1,37 @@
+version: 1
+formatters:
+  message_only:
+    format: "%(message)s"
+  text_file:
+    format: "%(asctime)s(%(relativeCreated)d) %(pathname)s:%(lineno)d in %(funcName)s %(levelname)s: %(message)s"
+    datefmt: "%Y-%m-%d %H:%M:%S"
+  html_file:
+    format: '<fieldset>
+<legend><span style="background-color: Lightgrey">&nbsp; %(asctime)s (%(relativeCreated)d) &nbsp;</span></legend>
+<span style="color: Blue">%(pathname)s:%(lineno)d in "%(funcName)s"</span>
+%(threadName)s(%(thread)d)
+<b>%(levelname)s:</b>
+<b style="color: Midnightblue">%(message)s</b>
+</fieldset>'
+    datefmt: "%Y-%m-%d %H:%M:%S"
+handlers:
+  console:
+    class: logging.StreamHandler
+    formatter: message_only
+    level: INFO
+    stream: ext://sys.stdout
+  text_file:
+    class: logging.handlers.RotatingFileHandler
+    formatter: text_file
+    filename: !!python/name:__main__.text_log_filename
+    maxBytes: 102400
+    backupCount: 3
+  html_file:
+    class: logging.handlers.RotatingFileHandler
+    formatter: html_file
+    filename: !!python/name:__main__.html_log_filename
+    maxBytes: 307200
+    backupCount: 3
+root:
+  level: NOTSET
+  handlers: [console, text_file, html_file]

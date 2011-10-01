@@ -60,11 +60,33 @@
        <attribute name="title">
         <string>Tab 1</string>
        </attribute>
+       <layout class="QVBoxLayout" name="verticalLayout">
+        <property name="spacing">
+         <number>0</number>
+        </property>
+        <property name="margin">
+         <number>0</number>
+        </property>
+        <item>
+         <widget class="QTextEdit" name="text1"/>
+        </item>
+       </layout>
       </widget>
       <widget class="QWidget" name="tab2">
        <attribute name="title">
         <string>Tab 2</string>
        </attribute>
+       <layout class="QVBoxLayout" name="verticalLayout_2">
+        <property name="spacing">
+         <number>0</number>
+        </property>
+        <property name="margin">
+         <number>0</number>
+        </property>
+        <item>
+         <widget class="QTextEdit" name="text2"/>
+        </item>
+       </layout>
       </widget>
      </widget>
     </item>
@@ -214,10 +236,27 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>tree</sender>
+   <signal>itemSelectionChanged()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>OnTreeItemSelected()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>124</x>
+     <y>278</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>349</x>
+     <y>271</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>OnFileNew()</slot>
   <slot>OnFileOpen()</slot>
   <slot>OnFileClose()</slot>
+  <slot>OnTreeItemSelected()</slot>
  </slots>
 </ui>

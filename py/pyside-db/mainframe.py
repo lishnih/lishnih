@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 # Stan 2011-06-22
 
+import os, logging
 from PySide import QtCore, QtGui
 from mainframe_ui import Ui_MainWindow
 from items import DirItem, FileItem
@@ -30,28 +31,37 @@ class MainFrame(QtGui.QMainWindow):
         filename = File.entry.absoluteFilePath()
         ext = File.entry.suffix()
 
-        # Если модуль был загружен ранее, то выполняем функцию-обработчик файла
-        if ext in self.ext_func:
-            try:
-                return self.ext_func[ext](filename, reg)
-            except:
-                File.SetError("Handler error in %s" % filename)
-                return
-
-        # Иначе, пробуем загрузить модуль, если он описан
         ext_py = "%s.py" % ext
         if self.ext_dir.exists(ext_py):
-            try:
-                mod = __import__('ext', globals(), locals(), [str(ext)])
-            except:
-                File.SetError("Module error in %s" % ext)
-                return
 
-            mod = getattr(mod, str(ext))
-            if 'Proceed' in dir(mod):
-                self.ext_func[ext] = mod.Proceed
-            else:
-                File.SetError("Proceed not found in %s" % ext)
+            # Загружаем модуль, если ещё не загружен
+            if ext not in self.ext_func:
+                try:
+                    mod = __import__('ext', globals(), locals(), [str(ext)])
+                except:
+                    File.SetError("Module error in %s" % ext)
+                    logging.exception(filename)
+                    return
+
+                mod = getattr(mod, str(ext))
+                if 'Proceed' in dir(mod):
+                    self.ext_func[ext] = mod.Proceed
+                else:
+                    File.SetError("Proceed not found in %s" % ext)
+                    logging.exception(filename)
+                    return
+
+            # Выполняем
+            try:
+                output, error = self.ext_func[ext](filename, reg)
+                if output:
+                    File.setData(0, QtCore.Qt.UserRole, output)
+                if error:
+                    File.SetError(error)
+            except:
+                File.SetError(u"Handler error in %s" % filename)
+                logging.exception(filename)
+                return
 
 
     # Функция пролистывает директорию, строит дерево, записывает в БД
@@ -131,6 +141,13 @@ class MainFrame(QtGui.QMainWindow):
                     Reg.getError(), QtGui.QMessageBox.Ok)
                 return
 
+            # Инициализуем Mongo БД
+#             M_Reg = MongoRegistry(selected_dir, True)  # True - обнуляем существующую БД
+#             if not M_Reg:
+#                 QtGui.QMessageBox.critical(None, "Mongo Database Error", \
+#                     M_Reg.getError(), QtGui.QMessageBox.Ok)
+#                 return
+
             # Статусбар отображает имя файла базы данных
             self.ui.statusbar.showMessage(Reg.db_fullname)
 
@@ -154,3 +171,15 @@ class MainFrame(QtGui.QMainWindow):
             return
 
         self.tree.clear()
+
+
+    def OnTreeItemSelected(self):
+        ti = self.ui.tree.currentItem()
+        out = ti.data(0, QtCore.Qt.UserRole)
+        err = ti.data(1, QtCore.Qt.UserRole)
+        if not isinstance(out, basestring):
+            out = repr(out)
+        if not isinstance(err, basestring):
+            err = repr(err)
+        self.ui.text1.setPlainText(out if out else "")
+        self.ui.text2.setPlainText(err if err else "")

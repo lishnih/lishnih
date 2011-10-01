@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'C:\Python27\Lib\site-packages\ndt\mainframe.ui'
+# Form implementation generated from reading ui file 'mainframe.ui'
 #
-# Created: Sat Aug 27 10:42:27 2011
-#      by: pyside-uic 0.2.12 running on PySide 1.0.5
+# Created: Thu Sep 29 22:32:35 2011
+#      by: pyside-uic 0.2.13 running on PySide 1.0.6
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -41,9 +41,23 @@ class Ui_MainWindow(object):
         self.tab.setObjectName("tab")
         self.tab1 = QtGui.QWidget()
         self.tab1.setObjectName("tab1")
+        self.verticalLayout = QtGui.QVBoxLayout(self.tab1)
+        self.verticalLayout.setSpacing(0)
+        self.verticalLayout.setContentsMargins(0, 0, 0, 0)
+        self.verticalLayout.setObjectName("verticalLayout")
+        self.text1 = QtGui.QTextEdit(self.tab1)
+        self.text1.setObjectName("text1")
+        self.verticalLayout.addWidget(self.text1)
         self.tab.addTab(self.tab1, "")
         self.tab2 = QtGui.QWidget()
         self.tab2.setObjectName("tab2")
+        self.verticalLayout_2 = QtGui.QVBoxLayout(self.tab2)
+        self.verticalLayout_2.setSpacing(0)
+        self.verticalLayout_2.setContentsMargins(0, 0, 0, 0)
+        self.verticalLayout_2.setObjectName("verticalLayout_2")
+        self.text2 = QtGui.QTextEdit(self.tab2)
+        self.text2.setObjectName("text2")
+        self.verticalLayout_2.addWidget(self.text2)
         self.tab.addTab(self.tab2, "")
         self.gridLayout.addWidget(self.tab, 0, 1, 1, 1)
         MainWindow.setCentralWidget(self.centralwidget)
@@ -86,6 +100,7 @@ class Ui_MainWindow(object):
         QtCore.QObject.connect(self.actionNew, QtCore.SIGNAL("triggered()"), MainWindow.OnFileNew)
         QtCore.QObject.connect(self.actionOpen, QtCore.SIGNAL("triggered()"), MainWindow.OnFileOpen)
         QtCore.QObject.connect(self.actionClose, QtCore.SIGNAL("triggered()"), MainWindow.OnFileClose)
+        QtCore.QObject.connect(self.tree, QtCore.SIGNAL("itemSelectionChanged()"), MainWindow.OnTreeItemSelected)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def retranslateUi(self, MainWindow):
