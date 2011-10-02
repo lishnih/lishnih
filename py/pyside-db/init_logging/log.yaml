@@ -21,16 +21,16 @@ handlers:
     level: INFO
     stream: ext://sys.stdout
   text_file:
-    class: logging.handlers.RotatingFileHandler
+    class: logging.handlers.TimedRotatingFileHandler
     formatter: text_file
-    filename: !!python/name:__main__.text_log_filename
-    maxBytes: 102400
-    backupCount: 3
+    filename: !!python/name:init_logging.text_log_filename
+    when: midnight
   html_file:
     class: logging.handlers.RotatingFileHandler
     formatter: html_file
-    filename: !!python/name:__main__.html_log_filename
-    maxBytes: 307200
+    filename: !!python/name:init_logging.html_log_filename
+    mode: w+
+    maxBytes: 102400
     backupCount: 3
 root:
   level: NOTSET
