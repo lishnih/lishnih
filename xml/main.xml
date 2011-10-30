@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<?xml-stylesheet type="text/xsl" href="base.xsl" ?>
+
+<!DOCTYPE html [
+<!ENTITY menu SYSTEM "menu.xml">
+]>
+
+<HTML>
+  <TITLE>Title</TITLE>
+
+  <STYLE href="view.css">Основной шаблон</STYLE>
+  <STYLE href="jquery-ui.css">Шаблон JQuery-UI</STYLE>
+
+  <SCRIPT src="jquery.js">JQuery</SCRIPT>
+  <SCRIPT src="jquery-ui.js">JQuery-UI</SCRIPT>
+
+  <script>
+    $(function() {
+    	$( "#tabs" ).tabs();
+    });
+  </script>
+
+  <body>
+&menu;
+<![CDATA[
+Hi, <b>Stan!</b>
+]]>
+  </body>
+</HTML>
