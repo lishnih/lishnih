@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
+# coding=utf-8
 # Stan 2011-06-30
 
 from PySide import QtCore, QtGui
@@ -21,9 +21,9 @@ class Item(QtGui.QTreeWidgetItem):
 # Элемент дерева - директория
 class DirItem(Item):
     def __init__(self, filename, parent):
-        self.directory = QtCore.QDir(filename)
+        self.directory = QDir(filename)
         self.directory.setFilter(QDir.Dirs | QDir.Files | QDir.NoSymLinks | QDir.NoDotAndDotDot | QDir.Hidden)
-        self.directory.setSorting(QtCore.QDir.DirsFirst)
+        self.directory.setSorting(QDir.DirsFirst)
 
         self.filename = self.directory.dirName()
         super(DirItem, self).__init__(self.filename, parent)
@@ -60,6 +60,8 @@ class DirItem(Item):
 # Элемент дерева - директория
 class FileItem(Item):
     def __init__(self, entry, parent):
+        if not isinstance(entry, QtCore.QFileInfo):
+            entry = QtCore.QFileInfo(entry)
+
         self.entry = entry
-        self.filename = self.entry.fileName()
-        super(FileItem, self).__init__(self.filename, parent)
+        super(FileItem, self).__init__(entry.fileName(), parent)

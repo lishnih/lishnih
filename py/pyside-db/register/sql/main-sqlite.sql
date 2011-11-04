@@ -1,10 +1,20 @@
 -- Stan 2011-06-25
--- Database of the functions
+-- Database
 
 
--- rev. 20110630
+-- rev. 20111104
+CREATE TABLE if not exists tasks (
+  id                INTEGER PRIMARY KEY,
+  taskname          VARCHAR,                -- имя
+  source            VARCHAR,                -- источник
+  start             INTEGER default 0       -- время первого запуска задания
+);
+
+
+-- rev. 20111102
 CREATE TABLE if not exists dirs (
   id                INTEGER PRIMARY KEY,
+  _tasks_id         INTEGER,                -- -> tasks/id
   dirname           VARCHAR,                -- имя директории
   dirs              INTEGER default 0,      -- кол-во поддиректорий
   files             INTEGER default 0,      -- кол-во файлов
@@ -12,10 +22,10 @@ CREATE TABLE if not exists dirs (
 );
 
 
--- rev. 20110626
+-- rev. 20111102
 CREATE TABLE if not exists files (
   id                INTEGER PRIMARY KEY,
-  dir_id_           INTEGER,                -- -> dirs
+  _dirs_id          INTEGER,                -- -> dirs/id
   filename          VARCHAR,                -- имя файла
   size              INTEGER default 0       -- размер файла
 );

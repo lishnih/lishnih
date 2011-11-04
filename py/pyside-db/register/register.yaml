@@ -1,0 +1,30 @@
+version: 1
+
+db_conn:
+  sqlite:
+    type: sqlite
+
+  mysql:
+    type: mysql
+    host: localhost
+    name: root
+    pass: 54321
+
+  mongodb:
+    type: mongodb
+    host: localhost
+    port: 27017
+
+db:
+  default:
+    conn: sqlite
+    filename: /opt/data/default.sqlite
+
+  reports_db:
+    conn: sqlite
+    filename: /opt/data/reports.sqlite
+
+task:
+  default:
+    db:
+      - default

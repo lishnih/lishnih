@@ -2,8 +2,8 @@
 
 # Form implementation generated from reading ui file 'mainframe.ui'
 #
-# Created: Thu Sep 29 22:32:35 2011
-#      by: pyside-uic 0.2.13 running on PySide 1.0.6
+# Created: Sun Oct 09 23:21:20 2011
+#      by: pyside-uic 0.2.13 running on PySide 1.0.7
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -75,18 +75,18 @@ class Ui_MainWindow(object):
         self.toolBar = QtGui.QToolBar(MainWindow)
         self.toolBar.setObjectName("toolBar")
         MainWindow.addToolBar(QtCore.Qt.TopToolBarArea, self.toolBar)
-        self.actionNew = QtGui.QAction(MainWindow)
-        self.actionNew.setObjectName("actionNew")
-        self.actionOpen = QtGui.QAction(MainWindow)
-        self.actionOpen.setObjectName("actionOpen")
+        self.actionProceedDir = QtGui.QAction(MainWindow)
+        self.actionProceedDir.setObjectName("actionProceedDir")
+        self.actionProceedFile = QtGui.QAction(MainWindow)
+        self.actionProceedFile.setObjectName("actionProceedFile")
         self.actionClose = QtGui.QAction(MainWindow)
         self.actionClose.setObjectName("actionClose")
         self.actionExit = QtGui.QAction(MainWindow)
         self.actionExit.setObjectName("actionExit")
         self.actionAbout = QtGui.QAction(MainWindow)
         self.actionAbout.setObjectName("actionAbout")
-        self.menuFile.addAction(self.actionNew)
-        self.menuFile.addAction(self.actionOpen)
+        self.menuFile.addAction(self.actionProceedDir)
+        self.menuFile.addAction(self.actionProceedFile)
         self.menuFile.addAction(self.actionClose)
         self.menuFile.addSeparator()
         self.menuFile.addAction(self.actionExit)
@@ -96,10 +96,11 @@ class Ui_MainWindow(object):
 
         self.retranslateUi(MainWindow)
         self.tab.setCurrentIndex(0)
+        QtCore.QObject.connect(self.actionProceedDir, QtCore.SIGNAL("triggered()"), MainWindow.OnProceedDir)
+        QtCore.QObject.connect(self.actionProceedFile, QtCore.SIGNAL("triggered()"), MainWindow.OnProceedFile)
+        QtCore.QObject.connect(self.actionClose, QtCore.SIGNAL("triggered()"), MainWindow.OnClose)
         QtCore.QObject.connect(self.actionExit, QtCore.SIGNAL("triggered()"), MainWindow.close)
-        QtCore.QObject.connect(self.actionNew, QtCore.SIGNAL("triggered()"), MainWindow.OnFileNew)
-        QtCore.QObject.connect(self.actionOpen, QtCore.SIGNAL("triggered()"), MainWindow.OnFileOpen)
-        QtCore.QObject.connect(self.actionClose, QtCore.SIGNAL("triggered()"), MainWindow.OnFileClose)
+        QtCore.QObject.connect(self.actionAbout, QtCore.SIGNAL("triggered()"), MainWindow.OnAbout)
         QtCore.QObject.connect(self.tree, QtCore.SIGNAL("itemSelectionChanged()"), MainWindow.OnTreeItemSelected)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
@@ -111,10 +112,10 @@ class Ui_MainWindow(object):
         self.menuFile.setTitle(QtGui.QApplication.translate("MainWindow", "File", None, QtGui.QApplication.UnicodeUTF8))
         self.menuHelp.setTitle(QtGui.QApplication.translate("MainWindow", "Help", None, QtGui.QApplication.UnicodeUTF8))
         self.toolBar.setWindowTitle(QtGui.QApplication.translate("MainWindow", "toolBar", None, QtGui.QApplication.UnicodeUTF8))
-        self.actionNew.setText(QtGui.QApplication.translate("MainWindow", "New", None, QtGui.QApplication.UnicodeUTF8))
-        self.actionNew.setShortcut(QtGui.QApplication.translate("MainWindow", "Alt+N", None, QtGui.QApplication.UnicodeUTF8))
-        self.actionOpen.setText(QtGui.QApplication.translate("MainWindow", "Open", None, QtGui.QApplication.UnicodeUTF8))
-        self.actionOpen.setShortcut(QtGui.QApplication.translate("MainWindow", "Alt+O", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionProceedDir.setText(QtGui.QApplication.translate("MainWindow", "Proceed Dir", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionProceedDir.setShortcut(QtGui.QApplication.translate("MainWindow", "Alt+D", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionProceedFile.setText(QtGui.QApplication.translate("MainWindow", "Proceed File", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionProceedFile.setShortcut(QtGui.QApplication.translate("MainWindow", "Alt+F", None, QtGui.QApplication.UnicodeUTF8))
         self.actionClose.setText(QtGui.QApplication.translate("MainWindow", "Close", None, QtGui.QApplication.UnicodeUTF8))
         self.actionClose.setShortcut(QtGui.QApplication.translate("MainWindow", "Alt+C", None, QtGui.QApplication.UnicodeUTF8))
         self.actionExit.setText(QtGui.QApplication.translate("MainWindow", "Exit", None, QtGui.QApplication.UnicodeUTF8))

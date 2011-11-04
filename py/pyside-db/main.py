@@ -1,18 +1,18 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
+# coding=utf-8
 # Stan 2011-06-22
 
 import sys, logging
 from PySide import QtCore, QtGui    # GUI
 
-import init_logging                 # Логи
+import init_logging                 # Настраиваем логи
 import mainframe                    # Основное окно
 
 
-def init_translator():
-    translator = QtCore.QTranslator()
-    translator.load("ru")
-    app.installTranslator(translator)
+# def init_translator():
+#     translator = QtCore.QTranslator()
+#     translator.load("ru")
+#     app.installTranslator(translator)
 
 
 def main():

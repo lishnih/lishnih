@@ -29,9 +29,9 @@ handlers:
     class: logging.handlers.RotatingFileHandler
     formatter: html_file
     filename: !!python/name:init_logging.html_log_filename
-    mode: w+
-    maxBytes: 102400
-    backupCount: 3
+    mode: a
+#   maxBytes: 1024000
+#   backupCount: 3
 root:
   level: NOTSET
   handlers: [console, text_file, html_file]

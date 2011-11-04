@@ -105,8 +105,8 @@
     <property name="title">
      <string>File</string>
     </property>
-    <addaction name="actionNew"/>
-    <addaction name="actionOpen"/>
+    <addaction name="actionProceedDir"/>
+    <addaction name="actionProceedFile"/>
     <addaction name="actionClose"/>
     <addaction name="separator"/>
     <addaction name="actionExit"/>
@@ -132,20 +132,20 @@
     <bool>false</bool>
    </attribute>
   </widget>
-  <action name="actionNew">
+  <action name="actionProceedDir">
    <property name="text">
-    <string>New</string>
+    <string>Proceed Dir</string>
    </property>
    <property name="shortcut">
-    <string>Alt+N</string>
+    <string>Alt+D</string>
    </property>
   </action>
-  <action name="actionOpen">
+  <action name="actionProceedFile">
    <property name="text">
-    <string>Open</string>
+    <string>Proceed File</string>
    </property>
    <property name="shortcut">
-    <string>Alt+O</string>
+    <string>Alt+F</string>
    </property>
   </action>
   <action name="actionClose">
@@ -173,6 +173,54 @@
  <resources/>
  <connections>
   <connection>
+   <sender>actionProceedDir</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>OnProceedDir()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>315</x>
+     <y>224</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionProceedFile</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>OnProceedFile()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>315</x>
+     <y>224</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionClose</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>OnClose()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>315</x>
+     <y>224</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
    <sender>actionExit</sender>
    <signal>triggered()</signal>
    <receiver>MainWindow</receiver>
@@ -189,50 +237,18 @@
    </hints>
   </connection>
   <connection>
-   <sender>actionNew</sender>
+   <sender>actionAbout</sender>
    <signal>triggered()</signal>
    <receiver>MainWindow</receiver>
-   <slot>OnFileNew()</slot>
+   <slot>OnAbout()</slot>
    <hints>
     <hint type="sourcelabel">
      <x>-1</x>
      <y>-1</y>
     </hint>
     <hint type="destinationlabel">
-     <x>315</x>
-     <y>224</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>actionOpen</sender>
-   <signal>triggered()</signal>
-   <receiver>MainWindow</receiver>
-   <slot>OnFileOpen()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>-1</x>
-     <y>-1</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>315</x>
-     <y>224</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>actionClose</sender>
-   <signal>triggered()</signal>
-   <receiver>MainWindow</receiver>
-   <slot>OnFileClose()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>-1</x>
-     <y>-1</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>315</x>
-     <y>224</y>
+     <x>349</x>
+     <y>271</y>
     </hint>
    </hints>
   </connection>
@@ -254,9 +270,10 @@
   </connection>
  </connections>
  <slots>
-  <slot>OnFileNew()</slot>
-  <slot>OnFileOpen()</slot>
-  <slot>OnFileClose()</slot>
+  <slot>OnProceedDir()</slot>
+  <slot>OnProceedFile()</slot>
+  <slot>OnClose()</slot>
+  <slot>OnAbout()</slot>
   <slot>OnTreeItemSelected()</slot>
  </slots>
 </ui>
