@@ -11,7 +11,15 @@ from items import DirItem, FileItem
 
 
 
-def TaskDir(filename, tree_item):
+def TaskDir(entry, tree_item):
+    if isinstance(entry, QtCore.QFileInfo):
+        filename = entry.absoluteFilePath()
+#       basename = entry.fileName()
+    else:
+        filename = entry
+#       entry = QtCore.QFileInfo(filename)
+#       basename = entry.fileName()
+
     # Создаём Регистратор
     Reg = Register('reports_db')
 
@@ -21,12 +29,20 @@ def TaskDir(filename, tree_item):
     dir_item, dir_summary = proceed.ProceedDir(filename, Task, tree_item)
 
     dir_item.setExpanded(True)
-    # Эта команда выдаст такую лабуду
+    # Эта команда выдаст такую лабуду:
     # QObject::startTimer: timers cannot be started from another thread
     # но своё дело сделает ))
 
 
-def TaskFile(filename, tree_item):
+def TaskFile(entry, tree_item):
+    if isinstance(entry, QtCore.QFileInfo):
+        filename = entry.absoluteFilePath()
+        basename = entry.fileName()
+    else:
+        filename = entry
+        entry = QtCore.QFileInfo(filename)
+        basename = entry.fileName()
+
     # Создаём Регистратор
     Reg = Register('reports_db')
 
@@ -34,16 +50,15 @@ def TaskFile(filename, tree_item):
     Task = save.task(Reg, type='file', source=filename)
 
     # Получаем и записываем информацию о директории
-    entry = QtCore.QFileInfo(filename)
     directory = entry.absoluteDir()
     Dir = save.dir(Task, dirname=directory.absolutePath(), volume=-1)
 
     # Добавляем к tree_item
-    dir_item = DirItem(entry.absolutePath(), tree_item)
+    dir_item = DirItem(directory.dirName(), tree_item)
 
     file_item, file_summary = proceed.ProceedFile(entry, Dir, dir_item)
 
     dir_item.setExpanded(True)
-    # Эта команда тоже выдаст такую лабуду
+    # Эта команда тоже выдаст такую лабуду:
     # QObject::startTimer: timers cannot be started from another thread
     # но своё дело сделает ))

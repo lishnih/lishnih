@@ -3,7 +3,7 @@
 # Stan 2011-07-03
 
 
-def Proceed(filename, reg=None):
+def Proceed(filename, reg=None, tree_item=None):
     return filename, None
 
 

@@ -116,6 +116,7 @@
      <string>Help</string>
     </property>
     <addaction name="actionAbout"/>
+    <addaction name="actionAbout_Qt"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuHelp"/>
@@ -167,6 +168,11 @@
   <action name="actionAbout">
    <property name="text">
     <string>About</string>
+   </property>
+  </action>
+  <action name="actionAbout_Qt">
+   <property name="text">
+    <string>About Qt</string>
    </property>
   </action>
  </widget>
@@ -253,6 +259,22 @@
    </hints>
   </connection>
   <connection>
+   <sender>actionAbout_Qt</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>OnAbout_Qt()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>349</x>
+     <y>271</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
    <sender>tree</sender>
    <signal>itemSelectionChanged()</signal>
    <receiver>MainWindow</receiver>
@@ -274,6 +296,7 @@
   <slot>OnTaskFile()</slot>
   <slot>OnClose()</slot>
   <slot>OnAbout()</slot>
+  <slot>OnAbout_Qt()</slot>
   <slot>OnTreeItemSelected()</slot>
  </slots>
 </ui>

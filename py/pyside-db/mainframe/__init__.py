@@ -2,7 +2,7 @@
 # coding=utf-8
 # Stan 2011-06-22
 
-import logging
+import sys, os, logging
 from PySide import QtCore, QtGui, __version__
 
 from mainframe_ui import Ui_MainWindow
@@ -11,7 +11,7 @@ import task                             # Модуль обработки
 
 
 class MainFrame(QtGui.QMainWindow):
-    def __init__(self, parent=None):
+    def __init__(self, argv=None):
         super(MainFrame, self).__init__()
 
         self.ui = Ui_MainWindow()
@@ -23,6 +23,17 @@ class MainFrame(QtGui.QMainWindow):
 
         welcome_sb_str = "PySide version: %s; Qt version: %s" % (__version__, QtCore.__version__)
         self.ui.statusbar.showMessage(welcome_sb_str)
+
+        # Если передан параметр - обрабатываем
+        if len(argv) > 1:
+            filename = argv[1]
+            if   os.path.isdir(filename):
+                th.start(task.TaskDir, filename, self.ui.tree)
+            elif os.path.isfile(filename):
+                th.start(task.TaskFile, filename, self.ui.tree)
+            else:
+                print u"Необходимо задать имя файла или директории!"
+                sys.exit(-1)
 
 # Слоты
 
@@ -79,7 +90,11 @@ class MainFrame(QtGui.QMainWindow):
 
 
     def OnAbout(self):
-        print "rev20111009"
+        print "rev20111105"
+
+
+    def OnAbout_Qt(self):
+        QtGui.QApplication.aboutQt()
 
 
     def OnTreeItemSelected(self):

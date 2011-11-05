@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'mainframe.ui'
 #
-# Created: Sat Nov 05 13:13:23 2011
+# Created: Sun Nov 06 01:32:30 2011
 #      by: pyside-uic 0.2.13 running on PySide 1.0.7
 #
 # WARNING! All changes made in this file will be lost!
@@ -85,12 +85,15 @@ class Ui_MainWindow(object):
         self.actionExit.setObjectName("actionExit")
         self.actionAbout = QtGui.QAction(MainWindow)
         self.actionAbout.setObjectName("actionAbout")
+        self.actionAbout_Qt = QtGui.QAction(MainWindow)
+        self.actionAbout_Qt.setObjectName("actionAbout_Qt")
         self.menuFile.addAction(self.actionTaskDir)
         self.menuFile.addAction(self.actionTaskFile)
         self.menuFile.addAction(self.actionClose)
         self.menuFile.addSeparator()
         self.menuFile.addAction(self.actionExit)
         self.menuHelp.addAction(self.actionAbout)
+        self.menuHelp.addAction(self.actionAbout_Qt)
         self.menubar.addAction(self.menuFile.menuAction())
         self.menubar.addAction(self.menuHelp.menuAction())
 
@@ -101,6 +104,7 @@ class Ui_MainWindow(object):
         QtCore.QObject.connect(self.actionClose, QtCore.SIGNAL("triggered()"), MainWindow.OnClose)
         QtCore.QObject.connect(self.actionExit, QtCore.SIGNAL("triggered()"), MainWindow.close)
         QtCore.QObject.connect(self.actionAbout, QtCore.SIGNAL("triggered()"), MainWindow.OnAbout)
+        QtCore.QObject.connect(self.actionAbout_Qt, QtCore.SIGNAL("triggered()"), MainWindow.OnAbout_Qt)
         QtCore.QObject.connect(self.tree, QtCore.SIGNAL("itemSelectionChanged()"), MainWindow.OnTreeItemSelected)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
@@ -121,4 +125,5 @@ class Ui_MainWindow(object):
         self.actionExit.setText(QtGui.QApplication.translate("MainWindow", "Exit", None, QtGui.QApplication.UnicodeUTF8))
         self.actionExit.setShortcut(QtGui.QApplication.translate("MainWindow", "Alt+X", None, QtGui.QApplication.UnicodeUTF8))
         self.actionAbout.setText(QtGui.QApplication.translate("MainWindow", "About", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionAbout_Qt.setText(QtGui.QApplication.translate("MainWindow", "About Qt", None, QtGui.QApplication.UnicodeUTF8))
 

@@ -13,11 +13,11 @@ from items import DirItem, FileItem
 def ProceedDir(entry, Reg, tree_item):
     if isinstance(entry, QtCore.QFileInfo):
         filename = entry.absoluteFilePath()
-        basename = entry.baseName()
+        basename = entry.fileName()
     else:
         filename = entry
-        entry = QtCore.QFileInfo(entry)
-        basename = entry.baseName()
+        entry = QtCore.QFileInfo(filename)
+        basename = entry.fileName()
 
     directory = QtCore.QDir(filename)
     directory.setFilter(QtCore.QDir.Dirs | QtCore.QDir.Files | QtCore.QDir.NoSymLinks | QtCore.QDir.NoDotAndDotDot | QtCore.QDir.Hidden)
@@ -62,7 +62,7 @@ def ProceedFile(entry, Reg, tree_item):
         basename = entry.fileName()
     else:
         filename = entry
-        entry = QtCore.QFileInfo(entry)
+        entry = QtCore.QFileInfo(filename)
         basename = entry.fileName()
 
 #   logging.debug(filename)
@@ -77,6 +77,6 @@ def ProceedFile(entry, Reg, tree_item):
     # Собираем следующую информацию о файле
     summary = dict(size=file_size)
 
-#     handler.file(entry, Reg, tree_item)
+    handler.file(entry, File, file_item)
 
     return file_item, summary

@@ -23,10 +23,11 @@ CREATE TABLE if not exists dirs (
 );
 
 
--- rev. 20111102
+-- rev. 20111106
 CREATE TABLE if not exists files (
   id                INTEGER PRIMARY KEY,
   _dirs_id          INTEGER,                -- -> dirs/id
   filename          VARCHAR,                -- имя файла
-  size              INTEGER default 0       -- размер файла
+  size              INTEGER default 0,      -- размер файла
+  proceed           INTEGER default 0       -- файл обрабатывался?
 );

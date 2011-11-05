@@ -21,8 +21,8 @@ def main():
     logging.debug("Start!")
 
     app = QtGui.QApplication(sys.argv)      # Приложение
-    frame = mainframe.MainFrame()           # Создаём окно
-    frame.show()                            # Отображаем!
+    frame = mainframe.MainFrame(sys.argv)   # Интерфейс
+    frame.show()                            # Показываем
     res = app.exec_()                       # Цикл
 
     logging.debug("Normal exiting!")
