@@ -19,10 +19,8 @@ class Item(QtGui.QTreeWidgetItem):
 
 # Элемент дерева - директория
 class DirItem(Item):
-    def __init__(self, directory, parent):
-        self.directory = directory
-
-        super(DirItem, self).__init__(directory.dirName(), parent)
+    def __init__(self, filename, parent):
+        super(DirItem, self).__init__(filename, parent)
 
         font = self.font(0)
         font.setBold(True)
@@ -35,7 +33,5 @@ class DirItem(Item):
 
 # Элемент дерева - файл
 class FileItem(Item):
-    def __init__(self, entry, parent):
-        self.entry = entry
-
-        super(FileItem, self).__init__(entry.fileName(), parent)
+    def __init__(self, filename, parent):
+        super(FileItem, self).__init__(filename, parent)
