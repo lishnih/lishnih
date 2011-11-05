@@ -34,30 +34,50 @@ class Db(object):
         return self.ok
 
 
-    def save(self, record, table):
+#     def __dict__(self):
+#         return self.conf
+
+
+    def save(self, table_name, record, unique):
         keys = ','.join(record)
         values = ','.join([u"'%s'" % i for i in record.values()])
-        sql = u"INSERT INTO %s (%s) VALUES (%s)" % (table, keys, values)
-        logging.info(sql)
-        self.Insert(sql)
+        sql = u"INSERT INTO %s (%s) VALUES (%s)" % (table_name, keys, values)
+#       logging.debug(sql)
+        resp = self.Insert(sql)
+        return resp
+
+
+
+    def update(self, table_name, record, pk_id):
+        expr = u""
+        for key, value in record.items():
+            if expr: expr += ', '
+            expr += u"%s=%s" % (key, value)
+        sql = u"UPDATE %s SET %s WHERE ROWID='%s'" % (table_name, expr, pk_id)
+#       logging.debug(sql)
+        resp = self.Insert(sql)
+        return resp
 
 
     def Select(self, sql):
         query = QtSql.QSqlQuery(self.db)
         resp = query.exec_(sql)
-#         fieldNo = query.record().indexOf("country")
-#         while query.next():
-#             country = query.value(fieldNo)
-#             doSomething(country)
+#       fieldNo = query.record().indexOf("country")
+#       while query.next():
+#           country = query.value(fieldNo)
+#           doSomething(country)
 
 
     def Insert(self, sql):
         query = QtSql.QSqlQuery(self.db)
-        resp = query.exec_(sql)
+        query.prepare(sql)
+        resp = query.exec_()
         if not resp:
-            self.lastError = query.lastError()
-            self.status = "Query {\n'''%s'''\n} is not executed!" % sql
-            return False
+            lastError = query.lastError()
+            logging.error(u"%s (%s)" % (lastError.text(), lastError.type()))
+            logging.error(sql)
+            return 0
+        return query.lastInsertId()
 
 
     def get_sql_filename(self, sql_name):

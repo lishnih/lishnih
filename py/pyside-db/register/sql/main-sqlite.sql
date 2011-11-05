@@ -5,9 +5,10 @@
 -- rev. 20111104
 CREATE TABLE if not exists tasks (
   id                INTEGER PRIMARY KEY,
-  taskname          VARCHAR,                -- имя
-  source            VARCHAR,                -- источник
-  start             INTEGER default 0       -- время первого запуска задания
+  taskname          VARCHAR,                -- имя задания
+  type              VARCHAR,                -- файл/директория
+  source            VARCHAR,                -- источник (имя файла)
+  start             INTEGER default 0       -- время создания задания
 );
 
 

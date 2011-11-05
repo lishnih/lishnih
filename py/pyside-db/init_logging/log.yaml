@@ -23,6 +23,7 @@ handlers:
   text_file:
     class: logging.handlers.TimedRotatingFileHandler
     formatter: text_file
+    level: INFO
     filename: !!python/name:init_logging.text_log_filename
     when: midnight
   html_file:

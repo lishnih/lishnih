@@ -7,7 +7,7 @@ from PySide import QtCore, QtGui, __version__
 
 from mainframe_ui import Ui_MainWindow
 from lib.thread1 import th              # Поток (уже созданный)
-import proceed                          # Модуль обработки
+import task                             # Модуль обработки
 
 
 class MainFrame(QtGui.QMainWindow):
@@ -26,7 +26,7 @@ class MainFrame(QtGui.QMainWindow):
 
 # Слоты
 
-    def OnProceedDir(self):
+    def OnTaskDir(self):
         if th.isRunning():
             print "running..."
             return
@@ -43,16 +43,13 @@ class MainFrame(QtGui.QMainWindow):
             self.ui.tree.clear()
 
             # Запускаем обработку
-            th.start(proceed.ProceedDir, selected_dir, self.ui.tree)
-
-            self.ui.tree.invisibleRootItem()
-            #self.ui.tree.topLevelItem().setExpanded(True)
+            th.start(task.TaskDir, selected_dir, self.ui.tree)
 
             # Отображаем путь в Статусбаре
             self.ui.statusbar.showMessage(selected_dir)
 
 
-    def OnProceedFile(self):
+    def OnTaskFile(self):
         if th.isRunning():
             print "running..."
             return
@@ -67,7 +64,7 @@ class MainFrame(QtGui.QMainWindow):
             self.ui.tree.clear()
 
             # Запускаем обработку
-            th.start(proceed.ProceedFile, selected_file, self.ui.tree)
+            th.start(task.TaskFile, selected_file, self.ui.tree)
 
             # Отображаем путь в Статусбаре
             self.ui.statusbar.showMessage(selected_file)

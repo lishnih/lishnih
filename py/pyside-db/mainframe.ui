@@ -105,8 +105,8 @@
     <property name="title">
      <string>File</string>
     </property>
-    <addaction name="actionProceedDir"/>
-    <addaction name="actionProceedFile"/>
+    <addaction name="actionTaskDir"/>
+    <addaction name="actionTaskFile"/>
     <addaction name="actionClose"/>
     <addaction name="separator"/>
     <addaction name="actionExit"/>
@@ -132,17 +132,17 @@
     <bool>false</bool>
    </attribute>
   </widget>
-  <action name="actionProceedDir">
+  <action name="actionTaskDir">
    <property name="text">
-    <string>Proceed Dir</string>
+    <string>Task Dir</string>
    </property>
    <property name="shortcut">
     <string>Alt+D</string>
    </property>
   </action>
-  <action name="actionProceedFile">
+  <action name="actionTaskFile">
    <property name="text">
-    <string>Proceed File</string>
+    <string>Task File</string>
    </property>
    <property name="shortcut">
     <string>Alt+F</string>
@@ -173,10 +173,10 @@
  <resources/>
  <connections>
   <connection>
-   <sender>actionProceedDir</sender>
+   <sender>actionTaskDir</sender>
    <signal>triggered()</signal>
    <receiver>MainWindow</receiver>
-   <slot>OnProceedDir()</slot>
+   <slot>OnTaskDir()</slot>
    <hints>
     <hint type="sourcelabel">
      <x>-1</x>
@@ -189,10 +189,10 @@
    </hints>
   </connection>
   <connection>
-   <sender>actionProceedFile</sender>
+   <sender>actionTaskFile</sender>
    <signal>triggered()</signal>
    <receiver>MainWindow</receiver>
-   <slot>OnProceedFile()</slot>
+   <slot>OnTaskFile()</slot>
    <hints>
     <hint type="sourcelabel">
      <x>-1</x>
@@ -270,8 +270,8 @@
   </connection>
  </connections>
  <slots>
-  <slot>OnProceedDir()</slot>
-  <slot>OnProceedFile()</slot>
+  <slot>OnTaskDir()</slot>
+  <slot>OnTaskFile()</slot>
   <slot>OnClose()</slot>
   <slot>OnAbout()</slot>
   <slot>OnTreeItemSelected()</slot>
