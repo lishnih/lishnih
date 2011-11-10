@@ -2,13 +2,33 @@
 # coding=utf-8
 # Stan 2011-07-03
 
+import sys
+
 
 def Proceed(filename, reg=None, tree_item=None):
-    return filename, None
+    res, summary = 0, {}
+
+    f = open(filename)
+    try:
+        summary['text'] = f.read()
+    except Exception, e:
+        summary['err'] = e
+        res = -2
+    finally:
+        f.close()
+
+    return res, summary
+
+
+
+def main():
+    if len(sys.argv) > 1:
+        res, summary = Proceed(sys.argv[1])
+        print res
+        print summary
+        return res
+
 
 
 if __name__ == '__main__':
-    if len(sys.argv) > 1:
-        out, err = Proceed(sys.argv[1])
-        print "Out: %r" % out
-        print "Err: %r" % err
+    sys.exit(main())

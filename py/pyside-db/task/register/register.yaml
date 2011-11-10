@@ -2,7 +2,7 @@ version: 1
 
 db_conn:
   sqlite_1:         &sqlite_1
-    type: sqlite
+    type: QSQLITE
 
   mysql_1:          &mysql_1
     type: mysql

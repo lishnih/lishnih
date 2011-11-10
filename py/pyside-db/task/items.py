@@ -11,6 +11,11 @@ class Item(QtGui.QTreeWidgetItem):
         self.setText(0, item_name)
 
 
+    def SetData(self, summary):
+        self.setForeground(0, QtGui.QBrush(QtCore.Qt.blue))
+        self.setData(0, QtCore.Qt.UserRole, summary)
+
+
     def SetError(self, error_text):
         self.setForeground(0, QtGui.QBrush(QtCore.Qt.red))
         self.setData(1, QtCore.Qt.UserRole, error_text)
@@ -26,8 +31,7 @@ class DirItem(Item):
         font.setBold(True)
         self.setFont(0, font)
 
-#         self.setData(0, QtCore.Qt.ToolTipRole, tooltip)
-#         self.setData(0, QtCore.Qt.UserRole, selected_dir)
+        self.setData(0, QtCore.Qt.UserRole, filename)
 
 
 
@@ -35,3 +39,5 @@ class DirItem(Item):
 class FileItem(Item):
     def __init__(self, filename, parent):
         super(FileItem, self).__init__(filename, parent)
+
+        self.setData(0, QtCore.Qt.UserRole, filename)

@@ -2,7 +2,7 @@
 # coding=utf-8
 # Stan 2011-11-03
 
-import time, logging
+import logging
 from PySide import QtCore
 
 import proceed, save
@@ -19,6 +19,8 @@ def TaskDir(entry, tree_item):
         filename = entry
 #       entry = QtCore.QFileInfo(filename)
 #       basename = entry.fileName()
+
+    logging.debug("TaskDir: %s" % filename)
 
     # Создаём Регистратор
     Reg = Register('reports_db')
@@ -37,11 +39,13 @@ def TaskDir(entry, tree_item):
 def TaskFile(entry, tree_item):
     if isinstance(entry, QtCore.QFileInfo):
         filename = entry.absoluteFilePath()
-        basename = entry.fileName()
+#       basename = entry.fileName()
     else:
         filename = entry
         entry = QtCore.QFileInfo(filename)
-        basename = entry.fileName()
+#       basename = entry.fileName()
+
+    logging.debug("TaskFile: %s" % filename)
 
     # Создаём Регистратор
     Reg = Register('reports_db')

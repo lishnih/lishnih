@@ -15,7 +15,8 @@ class Record(object):
 
     def save(self, table_name, record, unique=None):
         record[self.foreign_field] = self.pk_id
-        unique += self.foreign_field,
+        if unique:
+            unique += self.foreign_field,
         Rec = self.Reg.save(table_name, record, unique=unique)
         return Rec
 

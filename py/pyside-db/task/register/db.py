@@ -12,10 +12,9 @@ script_dir = os.path.dirname(__file__)
 class Db(object):
     def __init__(self, conf):
         self.conf = conf
-        db_fullname = conf['filename']
 
-        self.db = QtSql.QSqlDatabase("QSQLITE")
-        self.db.setDatabaseName(db_fullname)
+        self.db = QtSql.QSqlDatabase(conf['type'])
+        self.db.setDatabaseName(conf['filename'])
 
         self.ok = self.db.open()
         if not self.ok:
@@ -34,69 +33,73 @@ class Db(object):
         return self.ok
 
 
-#     def __dict__(self):
-#         return self.conf
-
-
     def save(self, table_name, record, unique):
         keys = ','.join(record)
-        values = ','.join([u"'%s'" % i for i in record.values()])
+        quotted_values = []
+        for value in record.values():
+            if isinstance(value, basestring):
+                value = value.replace("'", "''")
+            quotted_values.append(value)
+        values = ','.join([u"'%s'" % i for i in quotted_values])
         sql = u"INSERT INTO %s (%s) VALUES (%s)" % (table_name, keys, values)
 #       logging.debug(sql)
-        resp = self.Insert(sql)
-        return resp
-
+        pkid = self.insert(sql)
+        return pkid
 
 
     def update(self, table_name, record, pk_id):
         expr = u""
         for key, value in record.items():
+            if isinstance(value, basestring):
+                value = value.replace("'", "''")
             if expr: expr += ', '
             expr += u"%s=%s" % (key, value)
         sql = u"UPDATE %s SET %s WHERE ROWID='%s'" % (table_name, expr, pk_id)
 #       logging.debug(sql)
-        resp = self.Insert(sql)
-        return resp
+        res = self.request(sql)
+        return res
 
 
-    def Select(self, sql):
-        query = QtSql.QSqlQuery(self.db)
-        resp = query.exec_(sql)
-#       fieldNo = query.record().indexOf("country")
-#       while query.next():
-#           country = query.value(fieldNo)
-#           doSomething(country)
-
-
-    def Insert(self, sql):
+    def insert(self, sql):
         query = QtSql.QSqlQuery(self.db)
         query.prepare(sql)
-        resp = query.exec_()
-        if not resp:
+        res = query.exec_()
+        if not res:
             lastError = query.lastError()
             logging.error(u"%s (%s)" % (lastError.text(), lastError.type()))
             logging.error(sql)
-            return 0
-        return query.lastInsertId()
+        return query.lastInsertId() if res else 0
+
+
+    def request(self, sql):
+        query = QtSql.QSqlQuery(self.db)
+        query.prepare(sql)
+        res = query.exec_()
+        if not res:
+            lastError = query.lastError()
+            logging.error(u"%s (%s)" % (lastError.text(), lastError.type()))
+            logging.error(sql)
+        return res
 
 
     def get_sql_filename(self, sql_name):
         sql_type = 'sqlite'
-        sql_filename = "%s-%s.sql" % (sql_name, sql_type)
+        sql_filename = u"%s-%s.sql" % (sql_name, sql_type)
         sql_fullname = os.path.join(script_dir, "sql", sql_filename)
         return sql_fullname
 
 
     def exec_sql_file(self, filename):
         f = QtCore.QFile(filename)
-        query = QtSql.QSqlQuery(self.db)
 
         if not f.exists():
-            self.status = "Filename '%s' is not exists!" % filename
+            warn_str = u"File '%s' is not exists!" % filename
+            logging.warning(warn_str)
             return False
 
         if not f.open(QtCore.QIODevice.ReadOnly | QtCore.QIODevice.Text):
-            self.status = "Filename '%s' is not opened!" % filename
+            warn_str = u"Could not to open file: '%s'!" % filename
+            logging.warning(warn_str)
             return False
 
         sql = f.readAll()
@@ -106,12 +109,9 @@ class Db(object):
             sql = sql.__str__()
 
             if sql:
-                resp = query.exec_(sql)
-                if not resp:
-                    self.lastError = query.lastError()
-                    logging.error(u"Query from '%s' is not executed!" % filename)
-                    logging.error(sql)
-                    return False
+                res = self.request(sql)
+                if not res:
+                    warn_str = u"Query not executed: '%s'!" % sql
+                    logging.warning(warn_str)
 
-        self.status = "Filename '%s' is executed!" % filename
         return True

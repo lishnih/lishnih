@@ -5,10 +5,14 @@
 import time, logging
 
 
+def table(Reg, table, **kargs):
+    Table = Reg.save(table, dict(**kargs))
+    return Table
+
+
 def task(Reg, **kargs):
     task_dict = dict(**kargs)
-    task_dict['taskname'] = 'some_task',
-    task_dict['start']    = int(time.time())
+    task_dict['start'] = int(time.time())
 
     unique_tuple = 'taskname', 'type', 'source'
     Task = Reg.save('tasks', task_dict, unique=unique_tuple)

@@ -19,11 +19,11 @@ def ProceedDir(entry, Reg, tree_item):
         entry = QtCore.QFileInfo(filename)
         basename = entry.fileName()
 
+    logging.debug("ProceedDir: %s" % filename)
+
     directory = QtCore.QDir(filename)
     directory.setFilter(QtCore.QDir.Dirs | QtCore.QDir.Files | QtCore.QDir.NoSymLinks | QtCore.QDir.NoDotAndDotDot | QtCore.QDir.Hidden)
     directory.setSorting(QtCore.QDir.DirsFirst)
-
-#   logging.debug(filename)
 
     Dir = save.dir(Reg, dirname=filename, volume=-2)
 
@@ -55,7 +55,7 @@ def ProceedDir(entry, Reg, tree_item):
     return dir_item, summary
 
 
-# Файлы выбираются по расширению, для каждого расширения своя функция обработки
+# Файл передаётся обработкику
 def ProceedFile(entry, Reg, tree_item):
     if isinstance(entry, QtCore.QFileInfo):
         filename = entry.absoluteFilePath()
@@ -65,7 +65,7 @@ def ProceedFile(entry, Reg, tree_item):
         entry = QtCore.QFileInfo(filename)
         basename = entry.fileName()
 
-#   logging.debug(filename)
+    logging.debug("ProceedFile: %s" % filename)
 
     file_size = entry.size()
 
