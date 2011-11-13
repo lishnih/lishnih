@@ -22,4 +22,4 @@ class Record(object):
 
 
     def update(self, record):
-        self.Db.update(self.table, record, self.pk_id)
+        self.Db.update_record(self.table, record, self.pk_id)

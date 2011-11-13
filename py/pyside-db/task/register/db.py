@@ -16,6 +16,8 @@ class Db(object):
         self.db = QtSql.QSqlDatabase(conf['type'])
         self.db.setDatabaseName(conf['filename'])
 
+        self.sql_type = conf['type'][1:].lower()
+
         self.ok = self.db.open()
         if not self.ok:
             logging.error(self.db.lastError())
@@ -32,8 +34,19 @@ class Db(object):
     def __nonzero__(self):
         return self.ok
 
+###
 
-    def save(self, table_name, record, unique):
+    def serialize_for_select(self, record):
+        expr = u""
+        for key, value in record.items():
+            if isinstance(value, basestring):
+                value = value.replace("'", "''")
+            if expr: expr += ' AND '
+            expr += u"%s='%s'" % (key, value)
+        return expr
+
+
+    def serialize_for_insert(self, record):
         keys = ','.join(record)
         quotted_values = []
         for value in record.values():
@@ -41,35 +54,66 @@ class Db(object):
                 value = value.replace("'", "''")
             quotted_values.append(value)
         values = ','.join([u"'%s'" % i for i in quotted_values])
-        sql = u"INSERT INTO %s (%s) VALUES (%s)" % (table_name, keys, values)
-#       logging.debug(sql)
-        pkid = self.insert(sql)
-        return pkid
+        return keys, values
 
 
-    def update(self, table_name, record, pk_id):
+    def serialize_for_update(self, record):
         expr = u""
         for key, value in record.items():
             if isinstance(value, basestring):
                 value = value.replace("'", "''")
             if expr: expr += ', '
-            expr += u"%s=%s" % (key, value)
+            expr += u"%s='%s'" % (key, value)
+        return expr
+
+###
+
+    def select_record(self, table_name, record):
+        pkid_list = []
+
+        expr = self.serialize_for_select(record)
+        sql = u"SELECT ROWID FROM %s WHERE %s" % (table_name, expr)
+        res, query = self.request(sql)
+        if res:
+            while query.next():
+                pkid_list.append(query.value(0))
+
+        if not pkid_list:
+            return None
+        if len(pkid_list) > 1:
+            logging.warning(u"Запись {%r} повторяется в таблице '%s'!" % (record, table_name))
+        return pkid_list[0]
+
+
+    def append_record(self, table_name, record):
+        keys, values = self.serialize_for_insert(record)
+        sql = u"INSERT INTO %s (%s) VALUES (%s)" % (table_name, keys, values)
+        pkid = self.insert(sql)
+        return pkid
+
+
+
+    def save_record(self, table_name, record, unique_tuple):
+        unique_record = {}
+        for i in unique_tuple:
+            try:
+                unique_record[i] = record[i]
+            except KeyError:
+                logging.warning(u"Ключ '%s' не найден в записи 'record', но задан в 'unique_tuple'!" % i)
+        pkid = self.select_record(table_name, unique_record)
+
+        if not pkid:
+            pkid = self.append_record(table_name, record)
+        return pkid
+
+
+    def update_record(self, table_name, record, pk_id):
+        expr = self.serialize_for_update(record)
         sql = u"UPDATE %s SET %s WHERE ROWID='%s'" % (table_name, expr, pk_id)
-#       logging.debug(sql)
-        res = self.request(sql)
+        res, query = self.request(sql)
         return res
 
-
-    def insert(self, sql):
-        query = QtSql.QSqlQuery(self.db)
-        query.prepare(sql)
-        res = query.exec_()
-        if not res:
-            lastError = query.lastError()
-            logging.error(u"%s (%s)" % (lastError.text(), lastError.type()))
-            logging.error(sql)
-        return query.lastInsertId() if res else 0
-
+###
 
     def request(self, sql):
         query = QtSql.QSqlQuery(self.db)
@@ -79,12 +123,17 @@ class Db(object):
             lastError = query.lastError()
             logging.error(u"%s (%s)" % (lastError.text(), lastError.type()))
             logging.error(sql)
-        return res
+        return res, query
 
+
+    def insert(self, sql):
+        res, query = self.request(sql)
+        return query.lastInsertId() if res else 0
+
+###
 
     def get_sql_filename(self, sql_name):
-        sql_type = 'sqlite'
-        sql_filename = u"%s-%s.sql" % (sql_name, sql_type)
+        sql_filename = u"%s-%s.sql" % (sql_name, self.sql_type)
         sql_fullname = os.path.join(script_dir, "sql", sql_filename)
         return sql_fullname
 
@@ -106,10 +155,10 @@ class Db(object):
         result = sql.split(';')
         for sql in result:
             sql = sql.trimmed()
-            sql = sql.__str__()
+            sql = str(sql)
 
             if sql:
-                res = self.request(sql)
+                res, query = self.request(sql)
                 if not res:
                     warn_str = u"Query not executed: '%s'!" % sql
                     logging.warning(warn_str)

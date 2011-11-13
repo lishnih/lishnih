@@ -94,7 +94,7 @@ class Register(object):
 
     def save(self, table_name, record, unique=None):
         try:
-            id = self.Db.save(table_name, record, unique)
+            id = self.Db.save_record(table_name, record, unique)
             Rec = Record(self, table_name, id)
         except:
             Rec = None

@@ -17,12 +17,10 @@ class MainFrame(QtGui.QMainWindow):
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
 
-        self.cwd = QtCore.QDir.current()
-        self.ext_dir = QtCore.QDir(self.cwd.filePath('ext'))
-        self.ext_func = dict()
+        self.sb_message = "PySide version: %s; Qt version: %s" % (__version__, QtCore.__version__)
+        self.ui.statusbar.showMessage(self.sb_message)
 
-        welcome_sb_str = "PySide version: %s; Qt version: %s" % (__version__, QtCore.__version__)
-        self.ui.statusbar.showMessage(welcome_sb_str)
+        th.set_callback(self.update_func, self.ending_func)
 
         # Если передан параметр - обрабатываем
         if len(argv) > 1:
@@ -34,6 +32,27 @@ class MainFrame(QtGui.QMainWindow):
             else:
                 print u"Необходимо задать имя файла или директории!"
                 sys.exit(-1)
+
+# Callback-функции для Таймера
+
+    def convert_time(self, msecs):
+        secs = int(msecs / 1000)
+        hours = int(secs / 3600)
+        secs = secs - hours * 3600
+        mins = int(secs / 60)
+        secs = secs - mins * 3600
+        time_str = "%02d:%02d:%02d" % (hours, mins, secs)
+        return time_str
+
+
+    def update_func(self, msecs):
+        time_str = self.convert_time(msecs)
+        self.ui.statusbar.showMessage(u"%s :: Processing %s" % (self.sb_message, time_str))
+
+
+    def ending_func(self, msecs):
+        time_str = self.convert_time(msecs)
+        self.ui.statusbar.showMessage(u"%s :: Processed in %s" % (self.sb_message, time_str))
 
 # Слоты
 
@@ -53,11 +72,12 @@ class MainFrame(QtGui.QMainWindow):
 
             self.ui.tree.clear()
 
+            # Отображаем путь в Статусбаре
+            self.sb_message = selected_dir
+            self.update_func(0)
+
             # Запускаем обработку
             th.start(task.TaskDir, selected_dir, self.ui.tree)
-
-            # Отображаем путь в Статусбаре
-            self.ui.statusbar.showMessage(selected_dir)
 
 
     def OnTaskFile(self):
@@ -74,11 +94,12 @@ class MainFrame(QtGui.QMainWindow):
 
             self.ui.tree.clear()
 
+            # Отображаем путь в Статусбаре
+            self.sb_message = selected_file
+            self.update_func(0)
+
             # Запускаем обработку
             th.start(task.TaskFile, selected_file, self.ui.tree)
-
-            # Отображаем путь в Статусбаре
-            self.ui.statusbar.showMessage(selected_file)
 
 
     def OnClose(self):
