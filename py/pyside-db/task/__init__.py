@@ -7,11 +7,13 @@ from PySide import QtCore
 
 import proceed, save
 from register import Register
-from items import DirItem, FileItem
+from items import DirItem
 
 
 
 def TaskDir(entry, tree_item):
+    taskname = 'default'
+
     if isinstance(entry, QtCore.QFileInfo):
         filename = entry.absoluteFilePath()
 #       basename = entry.fileName()
@@ -23,10 +25,10 @@ def TaskDir(entry, tree_item):
     logging.debug("TaskDir: %s" % filename)
 
     # Создаём Регистратор
-    Reg = Register('reports_db')
+    Reg = Register(taskname)
 
     # Делаем запись о задании
-    Task = save.task(Reg, type='dir', source=filename)
+    Task = save.task(Reg, type='dir', taskname=taskname, source=filename)
 
     dir_item, dir_summary = proceed.ProceedDir(filename, Task, tree_item)
 
@@ -37,6 +39,8 @@ def TaskDir(entry, tree_item):
 
 
 def TaskFile(entry, tree_item):
+    taskname = 'default'
+
     if isinstance(entry, QtCore.QFileInfo):
         filename = entry.absoluteFilePath()
 #       basename = entry.fileName()
@@ -48,10 +52,10 @@ def TaskFile(entry, tree_item):
     logging.debug("TaskFile: %s" % filename)
 
     # Создаём Регистратор
-    Reg = Register('reports_db')
+    Reg = Register(taskname)
 
     # Делаем запись о задании
-    Task = save.task(Reg, type='file', source=filename)
+    Task = save.task(Reg, type='file', taskname=taskname, source=filename)
 
     # Получаем и записываем информацию о директории
     directory = entry.absoluteDir()

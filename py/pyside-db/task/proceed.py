@@ -77,6 +77,10 @@ def ProceedFile(entry, Reg, tree_item):
     # Собираем следующую информацию о файле
     summary = dict(size=file_size)
 
-    handler.file(entry, File, file_item)
+    try:
+        handler.file(entry, File, file_item)
+    except Exception, e:
+        error_str = u"Обработка файла '%s' завершилась с ошибкой: %s" % (filename, e)
+        logging.exception(error_str)
 
     return file_item, summary

@@ -2,7 +2,7 @@
 # coding=utf-8
 # Stan 2011-11-03
 
-import time, logging
+import time
 
 
 def table(Reg, table, **kargs):

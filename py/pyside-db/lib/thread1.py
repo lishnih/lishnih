@@ -2,6 +2,7 @@
 # coding=utf-8
 # Stan 2011-06-22
 
+import logging
 from PySide import QtCore
 
 
@@ -13,13 +14,13 @@ class Thread(QtCore.QThread):
 
         # Таймер
         self.timer = QtCore.QTimer(self)
+        self.interval = 1000
         self.update_func = None
         self.ending_func = None
-        self.interval = 500
         self.timer.timeout.connect(self.update)
 
         # Вывод
-        self.res = ""
+        self.message = ""
 
 
     def set_callback(self, update_func, ending_func=None):
@@ -35,7 +36,7 @@ class Thread(QtCore.QThread):
         else:
             self.timer.stop()
             if self.ending_func:
-                self.ending_func(self.secs)
+                self.ending_func(self.secs, self.message)
 
 
     def start(self, func, *args):
@@ -45,12 +46,16 @@ class Thread(QtCore.QThread):
         self.func = func
         self.args = args
         super(Thread, self).start()
-        return self.res
 
 
     def run(self):
         if self.func:
-            self.res = self.func(*self.args)
+            try:
+                self.message = self.func(*self.args)
+            except Exception, e:
+                error_str = u"Завершено с ошибкой: %s" % e
+                logging.exception(error_str)
+                self.message = error_str
 
 
 th = Thread()

@@ -3,7 +3,7 @@
 # Stan 2011-06-24
 
 import os, logging
-from PySide import QtCore, QtGui, QtSql
+import sqlite3 as sqlite
 
 
 script_dir = os.path.dirname(__file__)
@@ -13,22 +13,20 @@ class Db(object):
     def __init__(self, conf):
         self.conf = conf
 
-        self.db = QtSql.QSqlDatabase(conf['type'])
-        self.db.setDatabaseName(conf['filename'])
+        self.conn = sqlite.connect(conf['filename'])
+        self.cur = self.conn.cursor()
 
-        self.sql_type = conf['type'][1:].lower()
+        self.sql_type = conf['type']
 
-        self.ok = self.db.open()
-        if not self.ok:
-            logging.error(self.db.lastError())
-            return
-
-        filename = self.get_sql_filename("main")
-        self.ok = self.exec_sql_file(filename)
+        for i in conf['sql_files']:
+            filename = self.get_sql_filename(i)
+            self.ok = self.exec_sql_file(filename)
 
 
     def __del__(self):
-        pass
+        self.commit()
+        self.cur.close()
+        self.conn.close()
 
 
     def __nonzero__(self):
@@ -73,10 +71,12 @@ class Db(object):
 
         expr = self.serialize_for_select(record)
         sql = u"SELECT ROWID FROM %s WHERE %s" % (table_name, expr)
-        res, query = self.request(sql)
+        res = self.request(sql)
         if res:
-            while query.next():
-                pkid_list.append(query.value(0))
+            for i in self.cur:
+                pkid_list.append(i[0])
+#             while query.next():
+#                 pkid_list.append(query.value(0))
 
         if not pkid_list:
             return None
@@ -110,25 +110,27 @@ class Db(object):
     def update_record(self, table_name, record, pk_id):
         expr = self.serialize_for_update(record)
         sql = u"UPDATE %s SET %s WHERE ROWID='%s'" % (table_name, expr, pk_id)
-        res, query = self.request(sql)
+        res = self.request(sql)
         return res
 
 ###
 
+    def commit(self):
+        self.conn.commit()
+
+
     def request(self, sql):
-        query = QtSql.QSqlQuery(self.db)
-        query.prepare(sql)
-        res = query.exec_()
-        if not res:
-            lastError = query.lastError()
-            logging.error(u"%s (%s)" % (lastError.text(), lastError.type()))
-            logging.error(sql)
-        return res, query
+        try:
+            return self.cur.execute(sql)
+        except:
+            logging.exception(sql)
+            return None
 
 
     def insert(self, sql):
-        res, query = self.request(sql)
-        return query.lastInsertId() if res else 0
+        res = self.request(sql)
+        pkid = self.cur.lastrowid
+        return pkid
 
 ###
 
@@ -139,26 +141,20 @@ class Db(object):
 
 
     def exec_sql_file(self, filename):
-        f = QtCore.QFile(filename)
-
-        if not f.exists():
+        if not os.path.isfile(filename):
             warn_str = u"File '%s' is not exists!" % filename
             logging.warning(warn_str)
             return False
 
-        if not f.open(QtCore.QIODevice.ReadOnly | QtCore.QIODevice.Text):
-            warn_str = u"Could not to open file: '%s'!" % filename
-            logging.warning(warn_str)
-            return False
+        with open(filename) as f:
+            sql = f.read()
 
-        sql = f.readAll()
         result = sql.split(';')
         for sql in result:
-            sql = sql.trimmed()
-            sql = str(sql)
+            sql = sql.strip()
 
             if sql:
-                res, query = self.request(sql)
+                res = self.request(sql)
                 if not res:
                     warn_str = u"Query not executed: '%s'!" % sql
                     logging.warning(warn_str)

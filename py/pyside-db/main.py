@@ -3,10 +3,10 @@
 # Stan 2011-06-22
 
 import sys, logging
-from PySide import QtCore, QtGui    # GUI
+from PySide import QtCore, QtGui
 
-import init_logging                 # Настраиваем логи
-import mainframe                    # Основное окно
+import init_logging             # Настраиваем логи
+import mainframe                # Основное окно
 
 
 # def init_translator():

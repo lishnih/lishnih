@@ -2,12 +2,16 @@
 # coding=utf-8
 # Stan 2011-06-22
 
-import sys, os, logging
+import sys, os, time, logging
 from PySide import QtCore, QtGui, __version__
 
 from mainframe_ui import Ui_MainWindow
 from lib.thread1 import th              # Поток (уже созданный)
 import task                             # Модуль обработки
+
+
+company_section = "PySide"
+app_section = "Db"
 
 
 class MainFrame(QtGui.QMainWindow):
@@ -16,6 +20,11 @@ class MainFrame(QtGui.QMainWindow):
 
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
+
+        # Восстанавливаем состояние окна
+        settings = QtCore.QSettings(company_section, app_section)
+        self.restoreGeometry(settings.value("geometry"))
+        self.restoreState(settings.value("windowState"))
 
         self.sb_message = "PySide version: %s; Qt version: %s" % (__version__, QtCore.__version__)
         self.ui.statusbar.showMessage(self.sb_message)
@@ -40,19 +49,19 @@ class MainFrame(QtGui.QMainWindow):
         hours = int(secs / 3600)
         secs = secs - hours * 3600
         mins = int(secs / 60)
-        secs = secs - mins * 3600
+        secs = secs - mins * 60
         time_str = "%02d:%02d:%02d" % (hours, mins, secs)
         return time_str
 
 
     def update_func(self, msecs):
         time_str = self.convert_time(msecs)
-        self.ui.statusbar.showMessage(u"%s :: Processing %s" % (self.sb_message, time_str))
+        self.ui.statusbar.showMessage(u"%s > Processing %s" % (self.sb_message, time_str))
 
 
-    def ending_func(self, msecs):
+    def ending_func(self, msecs, message=None):
         time_str = self.convert_time(msecs)
-        self.ui.statusbar.showMessage(u"%s :: Processed in %s" % (self.sb_message, time_str))
+        self.ui.statusbar.showMessage(u"%s > Processed in %s (%s)" % (self.sb_message, time_str, message))
 
 # Слоты
 
@@ -111,7 +120,7 @@ class MainFrame(QtGui.QMainWindow):
 
 
     def OnAbout(self):
-        print "rev20111105"
+        print "rev20111113"
 
 
     def OnAbout_Qt(self):
@@ -128,3 +137,22 @@ class MainFrame(QtGui.QMainWindow):
             err = repr(err)
         self.ui.text1.setPlainText(out)
         self.ui.text2.setPlainText(err)
+
+#
+
+    def closeEvent(self, event):
+#       if self.userReallyWantsToQuit():
+#           event.accept()
+#       else:
+#           event.ignore()
+
+        if th.isRunning():
+            th.terminate()
+
+        settings = QtCore.QSettings(company_section, app_section)
+        settings.setValue("geometry", self.saveGeometry())
+        settings.setValue("windowState", self.saveState())
+
+        while th.isRunning():
+            print "Still running..."
+            time.sleep(1)

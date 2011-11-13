@@ -2,7 +2,7 @@ version: 1
 
 db_conn:
   sqlite_1:         &sqlite_1
-    type: QSQLITE
+    type: sqlite
 
   mysql_1:          &mysql_1
     type: mysql
@@ -19,10 +19,22 @@ db:
   default:          &default
     db_conn: *sqlite_1
     filename: /opt/data/default.sqlite
+    sql_files:
+      - main
 
-  reports_db:
+  ndt:
     db_conn: *sqlite_1
-    filename: /opt/data/reports.sqlite
+    filename: /opt/data/ndt.sqlite
+    sql_files:
+      - main
+      - ndt
+
+  qc_vt:
+    db_conn: *sqlite_1
+    filename: /opt/data/qc_vt.sqlite
+    sql_files:
+      - main
+      - qc_vt
 
 db_set:
   default:
