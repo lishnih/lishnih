@@ -12,7 +12,8 @@ from items import DirItem
 
 
 def TaskDir(entry, tree_item):
-    taskname = 'default'
+    taskname = 'default'        # !!!
+    tasktype = 'dir'
 
     if isinstance(entry, QtCore.QFileInfo):
         filename = entry.absoluteFilePath()
@@ -28,18 +29,23 @@ def TaskDir(entry, tree_item):
     Reg = Register(taskname)
 
     # Делаем запись о задании
-    Task = save.task(Reg, type='dir', taskname=taskname, source=filename)
+    Task = save.task(Reg, taskname=taskname, tasktype=tasktype, source=filename)
 
-    dir_item, dir_summary = proceed.ProceedDir(filename, Task, tree_item)
+    # Обрабатываем
+    res, summary = proceed.ProceedDir(filename, Task, tree_item)
 
-    dir_item.setExpanded(True)
+    logging.debug("Task '%s' завершён: %s, %r" % (taskname, res, summary))
+
+    h = tree_item.itemAt(0, 0)
+    h.setExpanded(True)
     # Эта команда выдаст такую лабуду:
     # QObject::startTimer: timers cannot be started from another thread
     # но своё дело сделает ))
 
 
 def TaskFile(entry, tree_item):
-    taskname = 'default'
+    taskname = 'default'        # !!!
+    tasktype = 'file'
 
     if isinstance(entry, QtCore.QFileInfo):
         filename = entry.absoluteFilePath()
@@ -55,16 +61,19 @@ def TaskFile(entry, tree_item):
     Reg = Register(taskname)
 
     # Делаем запись о задании
-    Task = save.task(Reg, type='file', taskname=taskname, source=filename)
+    Task = save.task(Reg, taskname=taskname, tasktype=tasktype, source=filename)
 
     # Получаем и записываем информацию о директории
     directory = entry.absoluteDir()
     Dir = save.dir(Task, dirname=directory.absolutePath(), volume=-1)
 
     # Добавляем к tree_item
-    dir_item = DirItem(directory.dirName(), tree_item)
+    dir_item = DirItem(tree_item, directory.dirName())
 
-    file_item, file_summary = proceed.ProceedFile(entry, Dir, dir_item)
+    # Обрабатываем
+    res, summary = proceed.ProceedFile(entry, Dir, dir_item)
+
+    logging.debug("Task '%s' завершён: %s, %r" % (taskname, res, summary))
 
     dir_item.setExpanded(True)
     # Эта команда тоже выдаст такую лабуду:

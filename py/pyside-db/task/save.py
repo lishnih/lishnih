@@ -14,7 +14,7 @@ def task(Reg, **kargs):
     task_dict = dict(**kargs)
     task_dict['start'] = int(time.time())
 
-    unique_tuple = 'taskname', 'type', 'source'
+    unique_tuple = 'taskname', 'tasktype', 'source'
     Task = Reg.save('tasks', task_dict, unique=unique_tuple)
     return Task
 

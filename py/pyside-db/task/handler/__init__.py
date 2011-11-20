@@ -10,7 +10,7 @@ script_dir = os.path.dirname(__file__)
 
 
 def file(entry, Reg=None, tree_item=None):
-    res, summary = 0, {}
+    res, summary = -1, {}
 
     if isinstance(entry, QtCore.QFileInfo):
         filename = entry.absoluteFilePath()
@@ -36,13 +36,12 @@ def file(entry, Reg=None, tree_item=None):
             ext_func = ext_mod.Proceed if 'Proceed' in dir(ext_mod) else None
             if ext_func:
                 try:
-                    logging.debug("Handling file '%s' with ext '%s'" % (filename, ext))
+#                   logging.debug("Handling file '%s' with ext '%s'" % (filename, ext))
                     res, summary = ext_func(filename, Reg, tree_item)
-                    tree_item.SetData(summary)
-                    Reg.update(dict(proceed=1))
                 except:
                     error_str = u"Handler error in %s" % filename
                     logging.exception(error_str)
+                    res, summary = -5, dict(error=error_str)
 
         else:
             logging.debug(u"Расширение '%s' не обрабатывается!" % ext)

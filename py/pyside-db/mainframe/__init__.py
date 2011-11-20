@@ -56,12 +56,12 @@ class MainFrame(QtGui.QMainWindow):
 
     def update_func(self, msecs):
         time_str = self.convert_time(msecs)
-        self.ui.statusbar.showMessage(u"%s > Processing %s" % (self.sb_message, time_str))
+        self.ui.statusbar.showMessage(u"%s   |   Processing %s" % (self.sb_message, time_str))
 
 
     def ending_func(self, msecs, message=None):
         time_str = self.convert_time(msecs)
-        self.ui.statusbar.showMessage(u"%s > Processed in %s (%s)" % (self.sb_message, time_str, message))
+        self.ui.statusbar.showMessage(u"%s   |   Processed in %s   |   %s" % (self.sb_message, time_str, message))
 
 # Слоты
 
@@ -120,7 +120,7 @@ class MainFrame(QtGui.QMainWindow):
 
 
     def OnAbout(self):
-        print "rev20111113"
+        print "rev20111120"
 
 
     def OnAbout_Qt(self):
@@ -129,14 +129,20 @@ class MainFrame(QtGui.QMainWindow):
 
     def OnTreeItemSelected(self):
         ti = self.ui.tree.currentItem()
-        out = ti.data(0, QtCore.Qt.UserRole)
-        err = ti.data(1, QtCore.Qt.UserRole)
-        if not isinstance(out, basestring):
-            out = repr(out)
-        if not isinstance(err, basestring):
-            err = repr(err)
-        self.ui.text1.setPlainText(out)
-        self.ui.text2.setPlainText(err)
+        text1 = ti.data(0, QtCore.Qt.UserRole)
+        text2 = ti.data(1, QtCore.Qt.UserRole)
+        if not isinstance(text1, basestring):
+            if isinstance(text1, dict):
+                text1s = ""
+                for key, value in text1.items():
+                    text1s += u"%s: %r\n" % (key, value)
+                text1 = text1s
+            else:
+                text1 = repr(text1)
+        if not isinstance(text2, basestring):
+            text2 = repr(text2)
+        self.ui.text1.setPlainText(text1)
+        self.ui.text2.setPlainText(text2)
 
 #
 

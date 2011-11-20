@@ -19,25 +19,26 @@ def ProceedDir(entry, Reg, tree_item):
         entry = QtCore.QFileInfo(filename)
         basename = entry.fileName()
 
-    logging.debug("ProceedDir: %s" % filename)
+#   logging.debug(u"ProceedDir: %s" % filename)
+
+    # Делаем запись в БД
+    Dir = save.dir(Reg, dirname=filename)
+
+    # Добавляем к tree_item
+    dir_item = DirItem(tree_item, basename)
+
+    # Информация о процессе выполнения / директории
+    summary = dict(dirs=0, files=0, volume=0)
 
     directory = QtCore.QDir(filename)
     directory.setFilter(QtCore.QDir.Dirs | QtCore.QDir.Files | QtCore.QDir.NoSymLinks | QtCore.QDir.NoDotAndDotDot | QtCore.QDir.Hidden)
     directory.setSorting(QtCore.QDir.DirsFirst)
 
-    Dir = save.dir(Reg, dirname=filename, volume=-2)
-
-    # Добавляем к tree_item
-    dir_item = DirItem(basename, tree_item)
-
-    # Собираем следующую информацию о директории
-    summary = dict(dirs=0, files=0, volume=0)
-
     # Пролистываем содержимое директории
     for entry in directory.entryInfoList():
         # Директория
         if entry.isDir():
-            subdir_item, subdir_summary = ProceedDir(entry.absoluteFilePath(), Reg, dir_item)
+            subdir_res, subdir_summary = ProceedDir(entry.absoluteFilePath(), Reg, dir_item)
             summary['dirs'] += 1
             summary['dirs'] += subdir_summary['dirs']
             summary['files'] += subdir_summary['files']
@@ -45,14 +46,17 @@ def ProceedDir(entry, Reg, tree_item):
 
         # Файл
         else:
-            file_item, file_summary = ProceedFile(entry, Dir, dir_item)
+            file_res, file_summary = ProceedFile(entry, Dir, dir_item)
             summary['files'] += 1
             summary['volume'] += file_summary['size']
 
     # Обновляем информацию о директории
     Dir.update(summary)
 
-    return dir_item, summary
+    res = 0
+    dir_item.update(res, summary)
+
+    return res, summary
 
 
 # Файл передаётся обработкику
@@ -65,22 +69,25 @@ def ProceedFile(entry, Reg, tree_item):
         entry = QtCore.QFileInfo(filename)
         basename = entry.fileName()
 
-    logging.debug("ProceedFile: %s" % filename)
+#   logging.debug(u"ProceedFile: %s" % filename)
 
-    file_size = entry.size()
-
-    File = save.file(Reg, filename=basename, size=file_size)
+    # Делаем запись в БД
+    File = save.file(Reg, filename=basename)
 
     # Добавляем к tree_item
-    file_item = FileItem(basename, tree_item)
+    file_item = FileItem(tree_item, basename)
 
-    # Собираем следующую информацию о файле
-    summary = dict(size=file_size)
+    # Информация о процессе выполнения / файле
+    summary = dict(size=entry.size())
 
     try:
-        handler.file(entry, File, file_item)
+        res, file_summary = handler.file(entry, File, file_item)
+        summary.update(file_summary)
     except Exception, e:
+        res = -5
         error_str = u"Обработка файла '%s' завершилась с ошибкой: %s" % (filename, e)
         logging.exception(error_str)
 
-    return file_item, summary
+    file_item.update(res, summary)
+
+    return res, summary

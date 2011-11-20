@@ -42,7 +42,7 @@ class Register(object):
                 id = self.Db.save_record(table_name, record, unique)
                 Rec = Record(self, table_name, id)
             except:
-                Rec = None
+                Rec = None          # !!!
                 logging.exception(record)
             return Rec
 

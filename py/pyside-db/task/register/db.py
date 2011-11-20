@@ -11,6 +11,8 @@ script_dir = os.path.dirname(__file__)
 
 class Db(object):
     def __init__(self, conf):
+        self._errors = []
+
         self.conf = conf
 
         self.conn = sqlite.connect(conf['filename'])
@@ -20,7 +22,7 @@ class Db(object):
 
         for i in conf['sql_files']:
             filename = self.get_sql_filename(i)
-            self.ok = self.exec_sql_file(filename)
+            res = self.exec_sql_file(filename)  # также обновляет список таблиц
 
 
     def __del__(self):
@@ -29,8 +31,84 @@ class Db(object):
         self.conn.close()
 
 
-    def __nonzero__(self):
-        return self.ok
+#     def __nonzero__(self):
+#         return self.ok
+
+
+    # обновляет список таблиц
+    def update_tables(self):
+        sql = "SELECT name FROM sqlite_master WHERE type='table' " \
+              "UNION ALL SELECT name FROM sqlite_temp_master " \
+              "WHERE type='table' ORDER BY name";
+        self.tables = self.select(sql)
+
+
+    def error_at_once(self, msg):
+        if not msg in self._errors:
+            logging.error(msg)
+        self._errors.append(msg)
+
+
+###
+
+    def select_record(self, table_name, record):
+        if not table_name in self.tables:
+            self.error_at_once("Tables '%s' is not exists!" % table_name)
+            return None
+
+        expr = self.serialize_for_select(record)
+        sql = u"SELECT ROWID FROM %s WHERE %s" % (table_name, expr)
+        pkid_list = self.select(sql)
+
+        if not pkid_list:
+            return None
+        if len(pkid_list) > 1:
+            logging.warning(u"Запись {%r} повторяется в таблице '%s'!" % (record, table_name))
+        return pkid_list[0]
+
+
+    def append_record(self, table_name, record):
+        if not table_name in self.tables:
+            self.error_at_once("Tables '%s' is not exists!" % table_name)
+            return None
+
+        keys, values = self.serialize_for_insert(record)
+        sql = u"INSERT INTO %s (%s) VALUES (%s)" % (table_name, keys, values)
+        pkid = self.insert(sql)
+        return pkid
+
+
+    # (unique_tuple=None) = append_record
+    def save_record(self, table_name, record, unique_tuple=None):
+        if not unique_tuple:
+            return self.append_record(table_name, record)
+
+        if not table_name in self.tables:
+            self.error_at_once("Tables '%s' is not exists!" % table_name)
+            return None
+
+        unique_record = {}
+        for i in unique_tuple:
+            try:
+                unique_record[i] = record[i]
+            except KeyError:
+                logging.warning(u"Ключ '%s' не найден в записи 'record', но задан в 'unique_tuple'!" % i)
+        pkid = self.select_record(table_name, unique_record)
+
+        if not pkid:
+            pkid = self.append_record(table_name, record)
+        return pkid
+
+
+    def update_record(self, table_name, record, pk_id):
+        if not table_name in self.tables:
+            self.error_at_once("Tables '%s' is not exists!" % table_name)
+            return None
+
+        expr = self.serialize_for_update(record)
+        sql = u"UPDATE %s SET %s WHERE ROWID='%s'" % (table_name, expr, pk_id)
+        res = self.request(sql)
+        return res
 
 ###
 
@@ -66,55 +144,6 @@ class Db(object):
 
 ###
 
-    def select_record(self, table_name, record):
-        pkid_list = []
-
-        expr = self.serialize_for_select(record)
-        sql = u"SELECT ROWID FROM %s WHERE %s" % (table_name, expr)
-        res = self.request(sql)
-        if res:
-            for i in self.cur:
-                pkid_list.append(i[0])
-#             while query.next():
-#                 pkid_list.append(query.value(0))
-
-        if not pkid_list:
-            return None
-        if len(pkid_list) > 1:
-            logging.warning(u"Запись {%r} повторяется в таблице '%s'!" % (record, table_name))
-        return pkid_list[0]
-
-
-    def append_record(self, table_name, record):
-        keys, values = self.serialize_for_insert(record)
-        sql = u"INSERT INTO %s (%s) VALUES (%s)" % (table_name, keys, values)
-        pkid = self.insert(sql)
-        return pkid
-
-
-
-    def save_record(self, table_name, record, unique_tuple):
-        unique_record = {}
-        for i in unique_tuple:
-            try:
-                unique_record[i] = record[i]
-            except KeyError:
-                logging.warning(u"Ключ '%s' не найден в записи 'record', но задан в 'unique_tuple'!" % i)
-        pkid = self.select_record(table_name, unique_record)
-
-        if not pkid:
-            pkid = self.append_record(table_name, record)
-        return pkid
-
-
-    def update_record(self, table_name, record, pk_id):
-        expr = self.serialize_for_update(record)
-        sql = u"UPDATE %s SET %s WHERE ROWID='%s'" % (table_name, expr, pk_id)
-        res = self.request(sql)
-        return res
-
-###
-
     def commit(self):
         self.conn.commit()
 
@@ -127,6 +156,15 @@ class Db(object):
             return None
 
 
+    def select(self, sql):
+        pkid_list = []
+        res = self.request(sql)
+        if res:
+            for i in self.cur:
+                pkid_list.append(i[0])
+        return pkid_list
+
+
     def insert(self, sql):
         res = self.request(sql)
         pkid = self.cur.lastrowid
@@ -134,9 +172,11 @@ class Db(object):
 
 ###
 
-    def get_sql_filename(self, sql_name):
+    def get_sql_filename(self, sql_name, from_dir=None):
         sql_filename = u"%s-%s.sql" % (sql_name, self.sql_type)
-        sql_fullname = os.path.join(script_dir, "sql", sql_filename)
+        if not from_dir:
+            from_dir = script_dir
+        sql_fullname = os.path.join(from_dir, "sql", sql_filename)
         return sql_fullname
 
 
@@ -158,5 +198,7 @@ class Db(object):
                 if not res:
                     warn_str = u"Query not executed: '%s'!" % sql
                     logging.warning(warn_str)
+
+        self.update_tables()
 
         return True
