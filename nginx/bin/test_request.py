@@ -1,3 +1,7 @@
+#!/usr/bin/env python
+# coding=utf-8
+# Stan 2012-09-06
+
 import urllib2
 
 myurl = 'http://localhost/php/info.php'

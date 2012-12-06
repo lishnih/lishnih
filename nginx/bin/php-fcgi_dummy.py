@@ -1,3 +1,7 @@
+#!/usr/bin/env python
+# coding=utf-8
+# Stan 2011-07-22
+
 import SocketServer
 
 class MyTCPHandler(SocketServer.BaseRequestHandler):
@@ -12,7 +16,7 @@ class MyTCPHandler(SocketServer.BaseRequestHandler):
     def handle(self):
         # self.request is the TCP socket connected to the client
         self.data = self.request.recv(1024).strip()
-        print "%s wrote:" % self.client_address[0]
+        print "{0} wrote:".format(self.client_address[0])
         print self.data
         # just send back the same data, but upper-cased
         self.request.send(self.data)
