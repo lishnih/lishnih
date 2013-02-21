@@ -2,6 +2,8 @@
 rem Stan 2011-09-28
 
 
-C:\Python27\Scripts\pyside-uic.exe mainframe.ui -o mainframe_ui.py
+set SCRIPTS_PATH="C:\Python27\Scripts"
+
+FOR %%k IN (*.ui) DO %SCRIPTS_PATH%\pyside-uic.exe "%%k" -o "%%~nk_ui.py"
 
 pause
