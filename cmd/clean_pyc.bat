@@ -8,5 +8,4 @@ del /F/S/Q *.py~
 
 FOR /D %%d IN (*.egg-info) DO rmdir /S/Q %%d
 
-
 pause
