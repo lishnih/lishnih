@@ -5,6 +5,8 @@ del /F/S/Q *.pyc
 del /F/S/Q *.pyo
 del /F/S/Q *.py~
 
-FOR /D %%d IN (*.egg-info) DO rmdir /S/Q %%d
+FOR /R %%d IN (__pycache__) DO IF EXIST %%d echo %%d && rmdir /S/Q %%d
+
+FOR /D %%d IN (*.egg-info) DO echo %%d && rmdir /S/Q %%d
 
 pause

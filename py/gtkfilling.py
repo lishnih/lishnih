@@ -196,7 +196,7 @@ class fillingTreeView:
 
 Value: %s%s%s""" % (name_str, str(otype), value_str, doc_str, class_str)
         self.buffer.set_text(text)
-   
+
     def create_text(self):
         view = gtk.TextView()
         view.set_wrap_mode(gtk.WRAP_WORD)
