@@ -2,7 +2,7 @@
 rem Stan 2011-09-28
 
 
-set SCRIPTS_PATH="C:\Python27\Scripts"
+set SCRIPTS_PATH=C:\Python27\Scripts
 
 if (%1)==() (
   FOR %%k IN (*.ui) DO echo "%%k" && "%SCRIPTS_PATH%\pyside-uic.exe" "%%k" -o "%%~nk_ui.py"
