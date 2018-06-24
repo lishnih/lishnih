@@ -23,7 +23,7 @@ def dotted(dotted_dict, separator='.'):
 
 
 def todotted(todotted_dict, separator='.', level=None, up_dict=None, up_key=None):
-    new_dict = {} if up_dict == None else up_dict
+    new_dict = {} if up_dict is None else up_dict
     if isinstance(todotted_dict, dict):
         for key, value in todotted_dict.items():
             new_key = "%s%s%s" % (up_key, separator, key) if up_key else key
@@ -31,13 +31,10 @@ def todotted(todotted_dict, separator='.', level=None, up_dict=None, up_key=None
     else:
         new_dict[up_key] = todotted_dict
 
-    return new_dict if up_dict==None else 1
-
+    return new_dict if up_dict is None else 1
 
 
 if __name__ == "__main__":
-
-
     print u"Пример использования функции dotted:"
 
     t = {}
@@ -57,7 +54,6 @@ if __name__ == "__main__":
 
     print dotted(t)
     print
-
 
     print u"todotted возвращает в исходное состояние:"
     print todotted(t2)

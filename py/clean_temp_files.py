@@ -2,10 +2,12 @@
 # coding=utf-8
 # Stan 2015-05-26
 
-from __future__ import ( division, absolute_import,
-                         print_function, unicode_literals )
+from __future__ import (division, absolute_import,
+                        print_function, unicode_literals)
 
-import os, shutil, tempfile
+import os
+import shutil
+import tempfile
 
 
 os.path.samefile = lambda f1, f2: (
@@ -47,7 +49,7 @@ for root, dirs, files in os.walk(dirname):
             print("  Temp file:", i)
 
             src = os.path.join(root, i)
-            dst = os.path.join(tempdir, "{0}_{1}".format(i,n))
+            dst = os.path.join(tempdir, "{0}_{1}".format(i, n))
             try:
                 shutil.move(src, dst)
             except OSError as e:

@@ -2,8 +2,8 @@
 # coding=utf-8
 # Stan 2016-03-21
 
-from __future__ import ( division, absolute_import,
-                         print_function, unicode_literals )
+from __future__ import (division, absolute_import,
+                        print_function, unicode_literals)
 
 import os
 
@@ -68,9 +68,6 @@ def main():
     dirname = os.getcwdu()
 
     for root, dirs, files in os.walk(dirname):
-#       for i in dirs:
-#           pass
-
         for i in files:
             ext = os.path.splitext(i)[1]
             ext = ext[1:]

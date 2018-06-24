@@ -32,16 +32,17 @@
 # Step timing: 1,9 + 1,9 mkSec
 
 
-import sys, time
+import sys
+import time
 import serial
 
 
 portName = "COM5"
 
-#Open port for communication	
+# Open port for communication
 serPort = serial.Serial(portName, 19200, timeout=1)
 
-#Send the command
+# Send the command
 
 serPort.write("gpio set 6\r")
 
@@ -60,10 +61,10 @@ serPort.write("gpio set 7\r")
 for i in xrange(400*2):
     t1 = time.time()
     serPort.write("gpio set 5\r")
-#   time.sleep(0.0000019) 
+#   time.sleep(0.0000019)
     t2 = time.time()
     serPort.write("gpio clear 5\r")
-#   time.sleep(0.0000019) 
+#   time.sleep(0.0000019)
     t3 = time.time()
 
 #   print "t1:", t2 - t1
@@ -71,6 +72,6 @@ for i in xrange(400*2):
 
 serPort.write("gpio clear 7\r")
 
-	
-#Close the port
+
+# Close the port
 serPort.close()

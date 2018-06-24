@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # coding=utf-8
-# Stan December 27, 2009
+# Stan 2009-12-27
+
 """Filling is the GUI tree control through which a user can navigate
 the local namespace or any object.
 
@@ -28,21 +29,25 @@ self.cell.set_property("is-expander", True)
 Пока не знаю, как получить разрешение экрана.
 """
 
-__author__  = "Stan Ovchinnikov <lishnih@gmail.com>"
-__version__ = "0.01"
-
 import pygtk
-pygtk.require("2.0")
 import gtk
 
 import wx.py.introspect as introspect
 
-import types, inspect
+import types
+import inspect
 
 
-#~ from wx.py.filling import COMMONTYPES, SIMPLETYPES
-COMMONTYPES = [getattr(types, t) for t in dir(types) \
-               if not t.startswith('_') \
+__author__ = "Stan Ovchinnikov <lishnih@gmail.com>"
+__version__ = "0.01"
+
+
+pygtk.require("2.0")
+
+
+# from wx.py.filling import COMMONTYPES, SIMPLETYPES
+COMMONTYPES = [getattr(types, t) for t in dir(types)
+               if not t.startswith('_')
                and t not in ('ClassType', 'InstanceType', 'ModuleType')]
 
 DOCTYPES = ('BuiltinFunctionType', 'BuiltinMethodType', 'ClassType',
@@ -50,7 +55,7 @@ DOCTYPES = ('BuiltinFunctionType', 'BuiltinMethodType', 'ClassType',
             'LambdaType', 'MethodType', 'ModuleType',
             'UnboundMethodType', 'method-wrapper')
 
-SIMPLETYPES = [getattr(types, t) for t in dir(types) \
+SIMPLETYPES = [getattr(types, t) for t in dir(types)
                if not t.startswith('_') and t not in DOCTYPES]
 
 del DOCTYPES, t
@@ -67,10 +72,10 @@ class fillingTreeView:
     def objGetChildren(self, obj):
         """Возращает свойства или содержимое объекта obj"""
         otype = type(obj)
-        if otype is types.DictType and hasattr(obj, 'keys'):
+        if isinstance(obj, types.DictType) and hasattr(obj, 'keys'):
             return obj
         d = {}
-        if otype is types.ListType or otype is types.TupleType:
+        if isinstance(obj, (types.ListType, types.TupleType)):
             for n in range(len(obj)):
                 key = "[%02d]" % n
                 d[key] = obj[n]
@@ -92,13 +97,13 @@ class fillingTreeView:
 
                 # Элементы массива заключаем в одинарные кавычки
                 # за исключением locals()
-                if type(obj) is types.DictType and \
-                   type(key) is types.StringType and not isNamespace:
+                if isinstance(obj, types.DictType) and \
+                   isinstance(key, types.StringType) and not isNamespace:
                     key = repr(key)
 
                 piter = self.treestore.append(parent_iter, [key, child])
                 if self.objHasChildren(child):
-                    #~ self.cell.set_property("is-expander", True)
+                    # self.cell.set_property("is-expander", True)
                     self.treestore.append(piter, ["null", None])    # !!!
 
     def create_tree(self, obj, label, isNamespace):
@@ -139,7 +144,7 @@ class fillingTreeView:
     def onRowExpanding(self, treeview, iter, path):
         # Раскрытие пункта
         child_iter = self.treestore.iter_children(iter)
-        while child_iter != None:
+        while child_iter is not None:
             self.treestore.remove(child_iter)
             child_iter = self.treestore.iter_children(iter)
         property = self.treestore.get_value(iter, 1)
@@ -158,7 +163,7 @@ class fillingTreeView:
         # Двойной клик на пункте
         if path != (0,):
             iter = self.treestore.get_iter(path)
-            name     = self.treestore.get_value(iter, 0)
+            name = self.treestore.get_value(iter, 0)
             property = self.treestore.get_value(iter, 1)
             fillingTreeView(property, name)
 
@@ -184,7 +189,7 @@ class fillingTreeView:
 
         class_str = ""
         try:
-            if otype is types.InstanceType:
+            if isinstance(obj, types.InstanceType):
                 class_str = "\n\nClass Definition:\n\n%s" % \
                             inspect.getsource(obj.__class__)
             else:
@@ -211,7 +216,7 @@ Value: %s%s%s""" % (name_str, str(otype), value_str, doc_str, class_str)
     # Конструктор                  #
     ################################
     def __init__(self, rootObject=None, rootLabel="..."):
-        if rootObject == None:
+        if rootObject is None:
             import __main__
             rootObject = __main__.__dict__
             rootIsNamespace = True
@@ -226,7 +231,7 @@ Value: %s%s%s""" % (name_str, str(otype), value_str, doc_str, class_str)
         self.window.set_title("pyGTK_Filling")
 
         self.window.connect("destroy", lambda w: gtk.main_quit())
-        #~ self.window.connect("delete_event", lambda w, e: gtk.main_quit())
+        # self.window.connect("delete_event", lambda w, e: gtk.main_quit())
 
         # Горизонтальное расположение панелей в окне
         hpaned = gtk.HPaned()
@@ -245,7 +250,7 @@ Value: %s%s%s""" % (name_str, str(otype), value_str, doc_str, class_str)
 
 
 def main():
-    #~ from wx.py.PyFilling import main
+    # from wx.py.PyFilling import main
     tv = fillingTreeView()
     gtk.main()
 

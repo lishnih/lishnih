@@ -2,8 +2,8 @@
 # coding=utf-8
 # Stan 2015-05-30
 
-from __future__ import ( division, absolute_import,
-                         print_function, unicode_literals )
+from __future__ import (division, absolute_import,
+                        print_function, unicode_literals)
 
 import os
 

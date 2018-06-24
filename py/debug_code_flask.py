@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 # coding=utf-8
 
-from __future__ import ( division, absolute_import,
-                         print_function, unicode_literals )
+from __future__ import (division, absolute_import,
+                        print_function, unicode_literals)
 
 import logging
 
@@ -13,8 +13,7 @@ app = Flask(__name__, static_url_path='')
 @app.route("/")
 def index():
 
-### Input your code here ###
-
+    # === Input your code here ===
 
     k
     try:
@@ -23,8 +22,7 @@ def index():
         message = "Error: {0!r}".format(e)
         print(message)
 
-
-############################
+    # ============================
 
     return "The code performed successfully!"
 

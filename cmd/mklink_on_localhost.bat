@@ -1,11 +1,14 @@
-@rem stan 2016-05-19
 @echo off
+@rem stan 2016-05-19
+
 
 echo Необходимо запускать с правами Администратора
 pause
 
+
 set CURRENT_DIR=%~dp0
 cd /d "%CURRENT_DIR%"
+
 
 for %%a in (".") do set CURRENT_DIR_NAME=%%~na
 
